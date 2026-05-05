@@ -38,4 +38,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   requestAnimationFrame(loop);
+  
+  // Debug Features
+  const DEBUG = false; // Set to true locally to enable debug features
+  if (DEBUG) {
+    const resetBtn = document.getElementById('reset-btn');
+    if (resetBtn) {
+      resetBtn.style.display = 'block';
+      resetBtn.addEventListener('click', () => {
+        if(confirm("Are you sure you want to HARD RESET all progress?")) {
+          localStorage.removeItem('entropyEngineSave');
+          location.reload();
+        }
+      });
+    }
+  }
 });
