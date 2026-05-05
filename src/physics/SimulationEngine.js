@@ -83,13 +83,11 @@ export class SimulationEngine {
     if (!this.isDragging || !this.pendulum) return;
     this.isDragging = false;
     
-    const dx = this.dragStart.x - this.dragCurrent.x;
-    const dy = this.dragStart.y - this.dragCurrent.y;
-    
-    let impulse = (dx + dy) * 0.01; 
+    const level = this.gameEngine.slingshotLevel;
+    let impulse = (dx + dy) * 0.002 * level; 
     
     // Cap the maximum velocity you can inject with a single slingshot
-    const MAX_IMPULSE = 4;
+    const MAX_IMPULSE = 1.0 + (level * 0.5);
     if (impulse > MAX_IMPULSE) impulse = MAX_IMPULSE;
     if (impulse < -MAX_IMPULSE) impulse = -MAX_IMPULSE;
 
@@ -104,7 +102,7 @@ export class SimulationEngine {
     
     const ke = this.pendulum.getKineticEnergy();
     if (ke > 0.01) {
-      this.gameEngine.addJoules(ke * dt * 0.1); 
+      this.gameEngine.addJoules(ke * dt * 0.01); // 10x slower initial generation
     }
   }
 
