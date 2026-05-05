@@ -12,6 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
     simCanvas.height = container.clientHeight;
     trailCanvas.width = container.clientWidth;
     trailCanvas.height = container.clientHeight;
+    
+    if (window.simulation) {
+      window.simulation.recenter();
+    }
   }
   
   window.addEventListener('resize', resizeCanvas);
@@ -22,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Create physics engine
   const simulation = new SimulationEngine(simCanvas, trailCanvas, game);
+  window.simulation = simulation;
   game.setSimulation(simulation);
   
   // Start loop

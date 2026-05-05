@@ -26,8 +26,6 @@ export class SimulationEngine {
   }
   
   setLinks(numLinks) {
-    const cx = this.simCanvas.width / 2;
-    const cy = this.simCanvas.height / 3;
     
     let oldThetas = [];
     let oldOmegas = [];
@@ -35,8 +33,8 @@ export class SimulationEngine {
       oldThetas = this.pendulum.state.slice(0, this.pendulum.N);
       oldOmegas = this.pendulum.state.slice(this.pendulum.N, 2 * this.pendulum.N);
     }
-    
-    this.pendulum = new NPendulum(cx, cy, numLinks, this.config);
+    this.pendulum = new NPendulum(0, 0, numLinks, this.config);
+    this.recenter();
     
     for (let i = 0; i < numLinks; i++) {
       if (i < oldThetas.length) {
@@ -49,6 +47,25 @@ export class SimulationEngine {
     }
     
     this.trailCtx.clearRect(0, 0, this.trailCanvas.width, this.trailCanvas.height);
+  }
+  
+  recenter() {
+    if (!this.pendulum) return;
+    
+    let cx = this.simCanvas.width / 2;
+    let cy = this.simCanvas.height / 3;
+    
+    // Adjust for responsive UI overlays
+    if (window.innerWidth >= 768) {
+      // Offset by half of the 380px side panel + 20px padding
+      cx = (this.simCanvas.width - 400) / 2;
+    } else {
+      // Offset vertically to avoid the bottom sheet covering the bottom 45%
+      cy = this.simCanvas.height * 0.22;
+    }
+    
+    this.pendulum.x = cx;
+    this.pendulum.y = cy;
   }
   
   bindEvents() {
