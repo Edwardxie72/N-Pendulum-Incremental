@@ -1,0 +1,99 @@
+import { solveLinearSystem } from './MatrixMath.js';
+
+export class NPendulum {
+  constructor(x, y, config, initialThetas) {
+    this.x = x;
+    this.y = y;
+    
+    // config.links is the number of links N
+    this.N = config.links;
+    this.m = config.linkMass;
+    this.l = config.linkLength;
+    this.g = config.gravity * 100; // Scale gravity for pixel units
+
+    // State is an array of size 2*N: [theta_0..theta_N-1, omega_0..omega_N-1]
+    this.state = new Array(2 * this.N).fill(0);
+    for (let i = 0; i < this.N; i++) {
+      this.state[i] = initialThetas[i];
+      // omega is already 0
+    }
+    
+    // Trail positions for offscreen rendering (track the last bob)
+    this.prevTrail = null;
+    this.currTrail = null;
+  }
+
+  getDerivatives(state) {
+    const N = this.N;
+    const l = this.l;
+    const g = this.g;
+
+    const thetas = state.slice(0, N);
+    const omegas = state.slice(N, 2 * N);
+
+    const M = Array.from({ length: N }, () => new Array(N).fill(0));
+    const C = new Array(N).fill(0);
+
+    const mu = (i, j) => N - Math.max(i, j);
+
+    for (let i = 0; i < N; i++) {
+      for (let j = 0; j < N; j++) {
+        M[i][j] = mu(i, j) * Math.cos(thetas[i] - thetas[j]);
+      }
+      
+      let sum = 0;
+      for (let j = 0; j < N; j++) {
+        sum += mu(i, j) * omegas[j] * omegas[j] * Math.sin(thetas[i] - thetas[j]);
+      }
+      C[i] = -sum - (g / l) * mu(i, i) * Math.sin(thetas[i]);
+    }
+
+    const alphas = solveLinearSystem(M, C);
+
+    // Return [omegas, alphas]
+    return [...omegas, ...alphas];
+  }
+
+  update(dt) {
+    // RK4 Integration
+    const s = this.state;
+    
+    const k1 = this.getDerivatives(s);
+    
+    const s2 = s.map((val, i) => val + 0.5 * dt * k1[i]);
+    const k2 = this.getDerivatives(s2);
+    
+    const s3 = s.map((val, i) => val + 0.5 * dt * k2[i]);
+    const k3 = this.getDerivatives(s3);
+    
+    const s4 = s.map((val, i) => val + dt * k3[i]);
+    const k4 = this.getDerivatives(s4);
+
+    for (let i = 0; i < 2 * this.N; i++) {
+      this.state[i] += (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
+    }
+
+    // Calculate positions
+    const pos = this.getPositions();
+    const lastBob = pos[pos.length - 1];
+    
+    this.prevTrail = this.currTrail ? { ...this.currTrail } : { x: lastBob.x, y: lastBob.y };
+    this.currTrail = { x: lastBob.x, y: lastBob.y };
+  }
+
+  // Returns array of positions for each bob [{x,y}, {x,y}, ...]
+  getPositions() {
+    const pos = [];
+    let currentX = this.x;
+    let currentY = this.y;
+    
+    for (let i = 0; i < this.N; i++) {
+      const theta = this.state[i];
+      currentX += this.l * Math.sin(theta);
+      currentY += this.l * Math.cos(theta);
+      pos.push({ x: currentX, y: currentY });
+    }
+    
+    return pos;
+  }
+}
