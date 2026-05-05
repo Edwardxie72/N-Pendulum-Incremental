@@ -86,7 +86,13 @@ export class SimulationEngine {
     const dx = this.dragStart.x - this.dragCurrent.x;
     const dy = this.dragStart.y - this.dragCurrent.y;
     
-    const impulse = (dx + dy) * 0.05; 
+    let impulse = (dx + dy) * 0.05; 
+    
+    // Cap the maximum velocity you can inject with a single slingshot
+    const MAX_IMPULSE = 12;
+    if (impulse > MAX_IMPULSE) impulse = MAX_IMPULSE;
+    if (impulse < -MAX_IMPULSE) impulse = -MAX_IMPULSE;
+
     for(let i=0; i<this.pendulum.N; i++) {
         this.pendulum.state[this.pendulum.N + i] += impulse;
     }
