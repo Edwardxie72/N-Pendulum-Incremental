@@ -105,7 +105,7 @@ export class SimulationEngine {
     // Dynamically apply friction upgrades (Base 1.2, drops by 15% per level)
     // We add || 0 to protect against browser caching old GameEngine.js versions!
     const frictionLvl = this.gameEngine.frictionLevel || 0;
-    this.pendulum.config.friction = 1.2 * Math.pow(0.85, frictionLvl);
+    this.pendulum.friction = 1.2 * Math.pow(0.85, frictionLvl);
     
     this.pendulum.update(dt);
     
