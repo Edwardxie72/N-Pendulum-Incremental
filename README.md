@@ -1,4 +1,6 @@
-# The Entropy Engine
+# N-Pendulum Incremental
+
+More vibecoding with Antigravity
 
 An active, physics-based incremental idle game built entirely in Vanilla Javascript and HTML5 Canvas. 
 
