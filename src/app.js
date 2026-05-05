@@ -47,10 +47,16 @@ document.addEventListener('DOMContentLoaded', () => {
       resetBtn.style.display = 'block';
       resetBtn.addEventListener('click', () => {
         if(confirm("Are you sure you want to HARD RESET all progress?")) {
-          localStorage.removeItem('entropyEngineSave');
-          location.reload();
+          game.hardReset();
         }
       });
     }
+  }
+  
+  const playAgainBtn = document.getElementById('play-again-btn');
+  if (playAgainBtn) {
+    playAgainBtn.addEventListener('click', () => {
+      game.hardReset();
+    });
   }
 });

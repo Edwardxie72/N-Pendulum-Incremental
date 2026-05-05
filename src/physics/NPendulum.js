@@ -14,7 +14,7 @@ export class NPendulum {
     this.lastRewardAngles = new Array(this.N).fill(0);
     for (let i = 0; i < this.N; i++) {
       this.state[i] = Math.PI / 2;
-      this.lastRewardAngles[i] = Math.PI / 2;
+      this.lastRewardAngles[i] = (i === 0) ? Math.PI / 2 : 0;
     }
     
     this.loopEvents = [];
@@ -89,7 +89,8 @@ export class NPendulum {
     
     // Loop detection logic
     for (let i = 0; i < this.N; i++) {
-        let diff = this.state[i] - this.lastRewardAngles[i];
+        let currentAngle = (i === 0) ? this.state[i] : (this.state[i] - this.state[i - 1]);
+        let diff = currentAngle - this.lastRewardAngles[i];
         if (diff >= 2 * Math.PI) {
             this.lastRewardAngles[i] += 2 * Math.PI;
             this.loopEvents.push({ linkIndex: i, x: pos[i].x, y: pos[i].y });

@@ -37,6 +37,7 @@ export class GameEngine {
       loopCost: document.getElementById('loopCost'),
       buyLoopBtn: document.querySelector('#buy-loop-btn button'),
       constantsValue: document.getElementById('constantsValue'),
+      prestigeBtn: document.getElementById('prestigeBtn'),
       heatDeathBtn: document.getElementById('heatDeathBtn')
     };
     
@@ -137,12 +138,57 @@ export class GameEngine {
     }
   }
   
+  hardReset() {
+    this.joules = 0;
+    this.totalJoulesEarned = 0;
+    this.links = 1;
+    this.slingshotLevel = 1;
+    this.motorLevel = 0;
+    this.frictionLevel = 0;
+    this.loopLevel = 0;
+    this.universalConstants = 0;
+    this.cHeat = 1.0;
+    this.saveState();
+    location.reload();
+  }
+
+  getPendingConstants() {
+    if (this.totalJoulesEarned < 1e12) return 0;
+    return Math.floor(Math.pow(this.totalJoulesEarned / 1e12, 0.5)) - this.universalConstants;
+  }
+
+  prestige() {
+    const gained = this.getPendingConstants();
+    if (gained > 0) {
+      this.universalConstants += gained;
+      this.joules = 0;
+      this.links = 1;
+      this.slingshotLevel = 1;
+      this.motorLevel = 0;
+      this.frictionLevel = 0;
+      this.loopLevel = 0;
+      this.cHeat = 1.0 + (this.universalConstants * 0.1);
+      this.saveState();
+      location.reload();
+    }
+  }
+  
   bindEvents() {
     this.ui.buyLinkBtn.addEventListener('click', () => this.buyLink());
     this.ui.buySlingshotBtn.addEventListener('click', () => this.buySlingshot());
     this.ui.buyMotorBtn.addEventListener('click', () => this.buyMotor());
     this.ui.buyFrictionBtn.addEventListener('click', () => this.buyFriction());
     this.ui.buyLoopBtn.addEventListener('click', () => this.buyLoop());
+    
+    this.ui.prestigeBtn.addEventListener('click', () => {
+      if (confirm("Are you sure you want to undergo Entropic Rebirth? You will lose all current Joules and Upgrades, but gain a permanent production multiplier!")) {
+        this.prestige();
+      }
+    });
+
+    this.ui.heatDeathBtn.addEventListener('click', () => {
+      document.getElementById('victory-screen').classList.remove('hidden');
+    });
     
     // Save every 5 seconds
     setInterval(() => this.saveState(), 5000);
@@ -196,6 +242,22 @@ export class GameEngine {
     } else {
       this.ui.buyLoopBtn.classList.add('disabled');
     }
+    
+    const pending = this.getPendingConstants();
+    if (pending > 0) {
+      this.ui.prestigeBtn.classList.remove('disabled');
+      this.ui.prestigeBtn.innerText = `Entropic Rebirth (+${this.formatNumber(pending)} Constants)`;
+    } else {
+      this.ui.prestigeBtn.classList.add('disabled');
+      const req = 1e12 * Math.pow(this.universalConstants + 1, 2);
+      this.ui.prestigeBtn.innerText = `Rebirth at ${this.formatNumber(req)} J`;
+    }
+    
+    if (this.joules >= 1e100) {
+      this.ui.heatDeathBtn.classList.remove('disabled');
+    } else {
+      this.ui.heatDeathBtn.classList.add('disabled');
+    }
   }
   
   updateUI() {
@@ -248,7 +310,8 @@ export class GameEngine {
         this.frictionLevel = state.frictionLevel || 0;
         this.loopLevel = state.loopLevel || 0;
         this.universalConstants = state.universalConstants || 0;
-        this.cHeat = state.cHeat || 1.0;
+        this.cHeat = 1.0 + (this.universalConstants * 0.1); // Recalculate based on loaded constants
+        this.totalJoulesEarned = state.totalJoulesEarned || this.joules;
       } catch(e) {
         console.error("Save corrupted");
       }

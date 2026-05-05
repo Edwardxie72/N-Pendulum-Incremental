@@ -71,10 +71,19 @@
       </div>
       
       <div class="prestige-section">
-        <p class="constants-counter">Universal Constants: <span id="constantsValue">0</span> <span style="font-size: 0.8rem; color: #aaa;">(Goal: 1.00e100 Joules)</span></p>
-        <button id="heatDeathBtn" class="btn-danger" disabled>Initiate The Big Rip</button>
+        <p class="constants-counter">Universal Constants: <span id="constantsValue">0</span> <span style="font-size: 0.8rem; color: #aaa;">(+10% Joules each)</span></p>
+        <button id="prestigeBtn" class="btn-primary" disabled>Entropic Rebirth (Prestige)</button>
+        <button id="heatDeathBtn" class="btn-danger" style="margin-top: 10px;" disabled>Initiate Heat Death (Beat Game)</button>
         <button id="reset-btn" class="btn-danger" style="display: none; margin-top: 10px;">[DEBUG] Hard Reset Game</button>
       </div>
+    </div>
+  </div>
+
+  <div id="victory-screen" class="hidden">
+    <div class="victory-content glass-panel">
+      <h1>HEAT DEATH ACHIEVED</h1>
+      <p>Maximum Entropy has been reached. The universe is perfectly balanced in glorious chaos.</p>
+      <button id="play-again-btn" class="btn-primary" style="margin-top: 20px;">Play Again</button>
     </div>
   </div>
 
