@@ -118,7 +118,9 @@ export class SimulationEngine {
       if (motorLvl > 0) {
         const boostAmount = motorLvl * 0.05;
         for (const event of this.pendulum.boostEvents) {
-          this.pendulum.state[this.pendulum.N + event.linkIndex] += boostAmount * event.direction;
+          if (event.linkIndex === 0) {
+            this.pendulum.state[this.pendulum.N + event.linkIndex] += boostAmount * event.direction;
+          }
         }
       }
       this.pendulum.boostEvents = [];
