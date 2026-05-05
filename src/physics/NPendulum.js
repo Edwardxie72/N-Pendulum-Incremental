@@ -74,16 +74,14 @@ export class NPendulum {
       this.state[i] += (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
     }
 
-    // Prevent spinning past the top (Invisible Ceiling)
-    for (let i = 0; i < this.N; i++) {
-      const CEILING = Math.PI * 0.98; // Just before reaching the exact top
-      if (this.state[i] > CEILING) {
-        this.state[i] = CEILING;
-        this.state[this.N + i] *= -0.6; // Bounce with energy loss
-      } else if (this.state[i] < -CEILING) {
-        this.state[i] = -CEILING;
-        this.state[this.N + i] *= -0.6; // Bounce with energy loss
-      }
+    // Prevent spinning past the top (Invisible Ceiling) - only for the first link
+    const CEILING = Math.PI * 0.98; // Just before reaching the exact top
+    if (this.state[0] > CEILING) {
+      this.state[0] = CEILING;
+      this.state[this.N] *= -0.6; // Bounce with energy loss
+    } else if (this.state[0] < -CEILING) {
+      this.state[0] = -CEILING;
+      this.state[this.N] *= -0.6; // Bounce with energy loss
     }
 
     const pos = this.getPositions();
