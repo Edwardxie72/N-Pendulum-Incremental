@@ -112,15 +112,16 @@ export class SimulationEngine {
     this.pendulum.update(dt);
     
     const motorLvl = this.gameEngine.motorLevel || 0;
-    if (motorLvl > 0) {
-      const minSpeed = 0.5 * motorLvl;
-      for (let i = 0; i < this.pendulum.N; i++) {
-        let w = this.pendulum.state[this.pendulum.N + i];
-        if (w > -minSpeed && w < minSpeed) {
-           // Inject artificial velocity to maintain minimum speed
-           this.pendulum.state[this.pendulum.N + i] += (w >= 0 ? 1 : -1) * minSpeed * dt * 5;
+    
+    // Process swing boosts
+    if (this.pendulum.boostEvents && this.pendulum.boostEvents.length > 0) {
+      if (motorLvl > 0) {
+        const boostAmount = motorLvl * 0.5;
+        for (const event of this.pendulum.boostEvents) {
+          this.pendulum.state[this.pendulum.N + event.linkIndex] += boostAmount * event.direction;
         }
       }
+      this.pendulum.boostEvents = [];
     }
     
     const ke = this.pendulum.getKineticEnergy();

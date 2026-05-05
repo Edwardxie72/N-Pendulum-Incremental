@@ -18,8 +18,10 @@ export class NPendulum {
     }
     
     this.loopEvents = [];
+    this.boostEvents = [];
     this.prevTrails = null;
     this.currTrails = null;
+    this.lastSides = new Array(this.N).fill(1);
   }
 
   getKineticEnergy() {
@@ -87,7 +89,7 @@ export class NPendulum {
 
     const pos = this.getPositions();
     
-    // Loop detection logic
+    // Loop and Boost detection logic
     for (let i = 0; i < this.N; i++) {
         let currentAngle = (i === 0) ? this.state[i] : (this.state[i] - this.state[i - 1]);
         let diff = currentAngle - this.lastRewardAngles[i];
@@ -98,6 +100,15 @@ export class NPendulum {
             this.lastRewardAngles[i] -= 2 * Math.PI;
             this.loopEvents.push({ linkIndex: i, x: pos[i].x, y: pos[i].y });
         }
+        
+        let currentAbsAngle = this.state[i];
+        let currentSide = Math.sign(Math.sin(currentAbsAngle));
+        if (currentSide !== 0 && this.lastSides[i] !== 0 && currentSide !== this.lastSides[i]) {
+            if (Math.cos(currentAbsAngle) > 0) {
+                this.boostEvents.push({ linkIndex: i, direction: Math.sign(this.state[this.N + i] || 1) });
+            }
+        }
+        if (currentSide !== 0) this.lastSides[i] = currentSide;
     }
     
     // Multi-trail tracking
