@@ -59,4 +59,47 @@ document.addEventListener('DOMContentLoaded', () => {
       game.hardReset();
     });
   }
+
+  // UI Tab Navigation Logic
+  const navBtns = document.querySelectorAll('.nav-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
+  const sidePanel = document.getElementById('sidePanel');
+  const settingsBtn = document.getElementById('settings-toggle-btn');
+
+  sidePanel.classList.add('open'); // Default open
+
+  function switchTab(targetId) {
+    tabContents.forEach(tab => tab.classList.remove('active'));
+    navBtns.forEach(btn => btn.classList.remove('active'));
+    
+    document.getElementById(targetId).classList.add('active');
+    
+    document.querySelectorAll(`.nav-btn[data-target="${targetId}"]`).forEach(btn => {
+      btn.classList.add('active');
+    });
+
+    sidePanel.classList.add('open');
+  }
+
+  navBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (window.innerWidth < 768 && btn.classList.contains('active')) {
+        sidePanel.classList.toggle('open');
+        return;
+      }
+      switchTab(btn.getAttribute('data-target'));
+    });
+  });
+
+  if (settingsBtn) {
+    settingsBtn.addEventListener('click', () => {
+      if (window.innerWidth < 768) {
+        if (document.getElementById('settings-tab').classList.contains('active') && sidePanel.classList.contains('open')) {
+          sidePanel.classList.remove('open');
+          return;
+        }
+      }
+      switchTab('settings-tab');
+    });
+  }
 });

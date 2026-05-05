@@ -13,11 +13,8 @@
       <canvas id="simulation-canvas" class="simulation-canvas"></canvas>
     </div>
     
-    <div class="hud-container glass-panel">
-      <h1 class="title">The Entropy Engine</h1>
-      <p class="subtitle">Extract energy from chaos</p>
-
-      <div class="currency-display">
+    <div class="top-hud">
+      <div class="currency-display glass-panel">
         <div class="joule-counter">
           <span id="jouleValue">0.00</span> <span style="font-size: 1.2rem; color: #fff;">Joules</span>
         </div>
@@ -25,62 +22,88 @@
           +<span id="jouleRate">0.00</span> J/s
         </div>
       </div>
+      <div class="top-right-controls">
+        <button id="settings-toggle-btn" class="icon-btn">⚙️</button>
+      </div>
+    </div>
 
-      <div class="shop">
+    <!-- Mobile Bottom Nav -->
+    <div class="bottom-nav glass-panel">
+      <button class="nav-btn active" data-target="shop-tab">Shop</button>
+      <button class="nav-btn" data-target="prestige-tab">Prestige</button>
+    </div>
+
+    <!-- Side Panel / Bottom Sheet -->
+    <div class="side-panel glass-panel" id="sidePanel">
+      <!-- Desktop Tab Headers (Hidden on Mobile) -->
+      <div class="desktop-nav">
+        <button class="nav-btn active" data-target="shop-tab">Shop</button>
+        <button class="nav-btn" data-target="prestige-tab">Prestige</button>
+      </div>
+
+      <div class="tab-content active" id="shop-tab">
         <h2>Chaos Upgrades</h2>
-        
-        <div class="shop-item" id="buy-link-btn">
-          <div class="item-info">
-            <span class="item-name">Add Chaos Link</span>
-            <span class="item-desc">Current Links: <span id="currentLinks">1</span> / 10</span>
+        <div class="shop">
+          <div class="shop-item" id="buy-link-btn">
+            <div class="item-info">
+              <span class="item-name">Add Chaos Link</span>
+              <span class="item-desc">Current Links: <span id="currentLinks">1</span> / 10</span>
+            </div>
+            <button class="btn-primary">Cost: <span id="linkCost">10</span> J</button>
           </div>
-          <button class="btn-primary">Cost: <span id="linkCost">10</span> J</button>
-        </div>
-        
-        <div class="shop-item" id="buy-slingshot-btn">
-          <div class="item-info">
-            <span class="item-name">Upgrade Slingshot Velocity</span>
-            <span class="item-desc">Current Level: <span id="currentSlingshot">1</span></span>
+          
+          <div class="shop-item" id="buy-slingshot-btn">
+            <div class="item-info">
+              <span class="item-name">Upgrade Slingshot Velocity</span>
+              <span class="item-desc">Current Level: <span id="currentSlingshot">1</span></span>
+            </div>
+            <button class="btn-primary">Cost: <span id="slingshotCost">5</span> J</button>
           </div>
-          <button class="btn-primary">Cost: <span id="slingshotCost">5</span> J</button>
-        </div>
-        
-        <div class="shop-item" id="buy-motor-btn">
-          <div class="item-info">
-            <span class="item-name">Auto-Motor (Swing Boost)</span>
-            <span class="item-desc">Current Level: <span id="currentMotor">0</span></span>
+          
+          <div class="shop-item" id="buy-motor-btn">
+            <div class="item-info">
+              <span class="item-name">Auto-Motor (Swing Boost)</span>
+              <span class="item-desc">Current Level: <span id="currentMotor">0</span></span>
+            </div>
+            <button class="btn-primary">Cost: <span id="motorCost">50</span> J</button>
           </div>
-          <button class="btn-primary">Cost: <span id="motorCost">50</span> J</button>
-        </div>
-        
-        <div class="shop-item" id="buy-friction-btn">
-          <div class="item-info">
-            <span class="item-name">Lubricate Axles (Reduce Friction)</span>
-            <span class="item-desc">Current Level: <span id="currentFriction">0</span></span>
+          
+          <div class="shop-item" id="buy-friction-btn">
+            <div class="item-info">
+              <span class="item-name">Lubricate Axles (Reduce Friction)</span>
+              <span class="item-desc">Current Level: <span id="currentFriction">0</span></span>
+            </div>
+            <button class="btn-primary">Cost: <span id="frictionCost">100</span> J</button>
           </div>
-          <button class="btn-primary">Cost: <span id="frictionCost">100</span> J</button>
-        </div>
-        
-        <div class="shop-item" id="buy-loop-btn">
-          <div class="item-info">
-            <span class="item-name">Magnify Loops (Loop Multiplier)</span>
-            <span class="item-desc">Current Level: <span id="currentLoop">0</span></span>
+          
+          <div class="shop-item" id="buy-loop-btn">
+            <div class="item-info">
+              <span class="item-name">Magnify Loops (Loop Multiplier)</span>
+              <span class="item-desc">Current Level: <span id="currentLoop">0</span></span>
+            </div>
+            <button class="btn-primary">Cost: <span id="loopCost">200</span> J</button>
           </div>
-          <button class="btn-primary">Cost: <span id="loopCost">200</span> J</button>
-        </div>
-        
-        <div class="shop-item" id="buy-joule-multiplier-btn">
-          <div class="item-info">
-            <span class="item-name">Kinetic Efficiency (Joule Multiplier)</span>
-            <span class="item-desc">Current Level: <span id="currentJouleMultiplier">0</span></span>
+          
+          <div class="shop-item" id="buy-joule-multiplier-btn">
+            <div class="item-info">
+              <span class="item-name">Kinetic Efficiency (Joule Multiplier)</span>
+              <span class="item-desc">Current Level: <span id="currentJouleMultiplier">0</span></span>
+            </div>
+            <button class="btn-primary">Cost: <span id="jouleMultiplierCost">100</span> J</button>
           </div>
-          <button class="btn-primary">Cost: <span id="jouleMultiplierCost">100</span> J</button>
         </div>
       </div>
-      
-      <div class="prestige-section">
-        <p class="constants-counter">Universal Constants: <span id="constantsValue">0</span></p>
-        <button id="prestigeBtn" class="btn-primary" disabled>Entropic Rebirth (Prestige)</button>
+
+      <div class="tab-content" id="prestige-tab">
+        <h2>Entropic Progression</h2>
+        <div class="prestige-section">
+          <p class="constants-counter">Universal Constants: <span id="constantsValue">0</span></p>
+          <button id="prestigeBtn" class="btn-primary" disabled>Entropic Rebirth (Prestige)</button>
+        </div>
+      </div>
+
+      <div class="tab-content" id="settings-tab">
+        <h2>Settings</h2>
         <button id="heatDeathBtn" class="btn-danger" style="margin-top: 10px;" disabled>Initiate Heat Death (Beat Game)</button>
         <button id="reset-btn" class="btn-danger" style="display: none; margin-top: 10px;">[DEBUG] Hard Reset Game</button>
       </div>
