@@ -74,20 +74,22 @@ export class NPendulum {
       this.state[i] += (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
     }
 
-    // Prevent spinning past the top (Soft Spring Wall) - only for the first link
-    const CEILING = Math.PI * 0.95; 
+    // Prevent spinning past the top (Inelastic Hard Ceiling) - only for the first link
+    const CEILING = Math.PI * 0.98; 
     if (this.state[0] > CEILING) {
-      // Calculate how far past the top it went
-      const penetration = this.state[0] - CEILING;
-      // Apply a strong restorative spring force + heavy damping if it's moving further into the wall
-      if (this.state[this.N] > 0) {
-        this.state[this.N] -= (100 * penetration + 10 * this.state[this.N]) * dt; 
-      }
+      this.state[0] = CEILING;
+      // Kill upward velocity, let gravity pull it back down
+      if (this.state[this.N] > 0) this.state[this.N] = 0; 
     } else if (this.state[0] < -CEILING) {
-      const penetration = this.state[0] - (-CEILING);
-      if (this.state[this.N] < 0) {
-        this.state[this.N] -= (100 * penetration + 10 * this.state[this.N]) * dt;
-      }
+      this.state[0] = -CEILING;
+      if (this.state[this.N] < 0) this.state[this.N] = 0;
+    }
+
+    // Hard limit global angular velocity to prevent RK4 matrix explosions
+    const MAX_OMEGA = 35;
+    for (let i = 0; i < this.N; i++) {
+      if (this.state[this.N + i] > MAX_OMEGA) this.state[this.N + i] = MAX_OMEGA;
+      if (this.state[this.N + i] < -MAX_OMEGA) this.state[this.N + i] = -MAX_OMEGA;
     }
 
     const pos = this.getPositions();

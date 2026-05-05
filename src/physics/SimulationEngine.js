@@ -12,7 +12,7 @@ export class SimulationEngine {
       linkMass: 10,
       linkLength: 70,
       gravity: 9.8 * 100,
-      friction: 0.1
+      friction: 0.6 // Greatly increased friction
     };
     
     this.pendulum = null;
