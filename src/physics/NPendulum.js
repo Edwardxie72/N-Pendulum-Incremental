@@ -11,10 +11,12 @@ export class NPendulum {
     this.friction = config.friction;
 
     this.state = new Array(2 * this.N).fill(0);
-    this.lastRewardAngles = new Array(this.N).fill(0);
+    this.lastRewardAnglesAbs = new Array(this.N).fill(0);
+    this.lastRewardAnglesRel = new Array(this.N).fill(0);
     for (let i = 0; i < this.N; i++) {
       this.state[i] = Math.PI / 2;
-      this.lastRewardAngles[i] = (i === 0) ? Math.PI / 2 : 0;
+      this.lastRewardAnglesAbs[i] = Math.PI / 2;
+      this.lastRewardAnglesRel[i] = (i === 0) ? Math.PI / 2 : 0;
     }
     
     this.loopEvents = [];
@@ -91,18 +93,32 @@ export class NPendulum {
     
     // Loop and Boost detection logic
     for (let i = 0; i < this.N; i++) {
-        let currentAngle = this.state[i];
-        let diff = currentAngle - this.lastRewardAngles[i];
+        // Absolute Loop (Global loop around the anchor)
+        let absAngle = this.state[i];
+        let diffAbs = absAngle - this.lastRewardAnglesAbs[i];
         
-        let cx = i === 0 ? this.x : pos[i - 1].x;
-        let cy = i === 0 ? this.y : pos[i - 1].y;
+        if (diffAbs >= 2 * Math.PI) {
+            this.lastRewardAnglesAbs[i] += 2 * Math.PI;
+            let dist = Math.hypot(pos[i].x - this.x, pos[i].y - this.y);
+            this.loopEvents.push({ linkIndex: i, cx: this.x, cy: this.y, r: dist });
+        } else if (diffAbs <= -2 * Math.PI) {
+            this.lastRewardAnglesAbs[i] -= 2 * Math.PI;
+            let dist = Math.hypot(pos[i].x - this.x, pos[i].y - this.y);
+            this.loopEvents.push({ linkIndex: i, cx: this.x, cy: this.y, r: dist });
+        }
         
-        if (diff >= 2 * Math.PI) {
-            this.lastRewardAngles[i] += 2 * Math.PI;
-            this.loopEvents.push({ linkIndex: i, x: pos[i].x, y: pos[i].y, cx: cx, cy: cy, r: this.l });
-        } else if (diff <= -2 * Math.PI) {
-            this.lastRewardAngles[i] -= 2 * Math.PI;
-            this.loopEvents.push({ linkIndex: i, x: pos[i].x, y: pos[i].y, cx: cx, cy: cy, r: this.l });
+        // Relative Loop (Local loop around the parent)
+        if (i > 0) {
+            let relAngle = this.state[i] - this.state[i - 1];
+            let diffRel = relAngle - this.lastRewardAnglesRel[i];
+            
+            if (diffRel >= 2 * Math.PI) {
+                this.lastRewardAnglesRel[i] += 2 * Math.PI;
+                this.loopEvents.push({ linkIndex: i, cx: pos[i - 1].x, cy: pos[i - 1].y, r: this.l });
+            } else if (diffRel <= -2 * Math.PI) {
+                this.lastRewardAnglesRel[i] -= 2 * Math.PI;
+                this.loopEvents.push({ linkIndex: i, cx: pos[i - 1].x, cy: pos[i - 1].y, r: this.l });
+            }
         }
         
         let currentAbsAngle = this.state[i];
