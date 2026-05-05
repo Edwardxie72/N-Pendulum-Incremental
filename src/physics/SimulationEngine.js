@@ -104,10 +104,10 @@ export class SimulationEngine {
   update(dt) {
     if (!this.pendulum) return;
     
-    // Dynamically apply friction upgrades (Base 1.2, drops by 15% per level)
+    // Dynamically apply friction upgrades (Base 1.0, drops by 10% per level)
     // We add || 0 to protect against browser caching old GameEngine.js versions!
     const frictionLvl = this.gameEngine.frictionLevel || 0;
-    this.pendulum.friction = 1.2 * Math.pow(0.85, frictionLvl);
+    this.pendulum.friction = 1.0 * Math.pow(0.90, frictionLvl);
     
     this.pendulum.update(dt);
     
@@ -116,7 +116,7 @@ export class SimulationEngine {
     // Process swing boosts
     if (this.pendulum.boostEvents && this.pendulum.boostEvents.length > 0) {
       if (motorLvl > 0) {
-        const boostAmount = motorLvl * 0.5;
+        const boostAmount = motorLvl * 0.05;
         for (const event of this.pendulum.boostEvents) {
           this.pendulum.state[this.pendulum.N + event.linkIndex] += boostAmount * event.direction;
         }

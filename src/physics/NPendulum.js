@@ -91,7 +91,7 @@ export class NPendulum {
     
     // Loop and Boost detection logic
     for (let i = 0; i < this.N; i++) {
-        let currentAngle = (i === 0) ? this.state[i] : (this.state[i] - this.state[i - 1]);
+        let currentAngle = this.state[i];
         let diff = currentAngle - this.lastRewardAngles[i];
         if (diff >= 2 * Math.PI) {
             this.lastRewardAngles[i] += 2 * Math.PI;
