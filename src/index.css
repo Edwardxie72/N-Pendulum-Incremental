@@ -270,6 +270,10 @@ body {
     display: none;
   }
   
+  .top-right-controls {
+    display: none;
+  }
+  
   .side-panel {
     position: absolute;
     top: 20px;

@@ -88,6 +88,13 @@ export class SimulationEngine {
     const targetLength = Math.min(120, maxRadius / this.pendulum.N);
     this.pendulum.l = targetLength;
     this.config.linkLength = targetLength;
+    
+    // Reset trails so we don't draw a giant line when the canvas resizes
+    this.pendulum.prevTrails = null;
+    this.pendulum.currTrails = null;
+    if (this.trailCtx) {
+        this.trailCtx.clearRect(0, 0, this.trailCanvas.width, this.trailCanvas.height);
+    }
   }
   
   bindEvents() {
@@ -224,11 +231,10 @@ export class SimulationEngine {
     this.trailCtx.lineJoin = 'round';
     this.trailCtx.lineWidth = 2;
     
-    // Fade out trail canvas (preserves transparent background)
-    this.trailCtx.globalCompositeOperation = 'destination-out';
-    this.trailCtx.fillStyle = 'rgba(0, 0, 0, 0.015)'; // About 10 seconds to fade
+    // Use the native background color with a low opacity to smoothly fade the trail.
+    // This perfectly bypasses the integer rounding ghosting bug that destination-out causes!
+    this.trailCtx.fillStyle = 'rgba(5, 8, 15, 0.03)';
     this.trailCtx.fillRect(0, 0, this.trailCanvas.width, this.trailCanvas.height);
-    this.trailCtx.globalCompositeOperation = 'source-over';
 
     if (this.pendulum.prevTrails && this.pendulum.currTrails) {
       for (let i = 0; i < this.pendulum.N; i++) {
