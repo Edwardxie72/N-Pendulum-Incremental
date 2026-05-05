@@ -12,7 +12,7 @@ export class SimulationEngine {
       linkMass: 10,
       linkLength: 70,
       gravity: 9.8 * 100,
-      friction: 0.6 // Greatly increased friction
+      friction: 1.2 // Extremely high base friction
     };
     
     this.pendulum = null;
@@ -101,6 +101,11 @@ export class SimulationEngine {
 
   update(dt) {
     if (!this.pendulum) return;
+    
+    // Dynamically apply friction upgrades (Base 1.2, drops by 15% per level)
+    const frictionLvl = this.gameEngine.frictionLevel;
+    this.pendulum.config.friction = 1.2 * Math.pow(0.85, frictionLvl);
+    
     this.pendulum.update(dt);
     
     const motorLvl = this.gameEngine.motorLevel;

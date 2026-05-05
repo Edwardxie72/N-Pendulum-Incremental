@@ -6,6 +6,7 @@ export class GameEngine {
     this.maxLinks = 10;
     this.slingshotLevel = 1;
     this.motorLevel = 0;
+    this.frictionLevel = 0;
     this.universalConstants = 0;
     this.cHeat = 1.0; // Prestige multiplier
     
@@ -28,6 +29,9 @@ export class GameEngine {
       currentMotor: document.getElementById('currentMotor'),
       motorCost: document.getElementById('motorCost'),
       buyMotorBtn: document.querySelector('#buy-motor-btn button'),
+      currentFriction: document.getElementById('currentFriction'),
+      frictionCost: document.getElementById('frictionCost'),
+      buyFrictionBtn: document.querySelector('#buy-friction-btn button'),
       constantsValue: document.getElementById('constantsValue'),
       heatDeathBtn: document.getElementById('heatDeathBtn')
     };
@@ -52,6 +56,10 @@ export class GameEngine {
   
   getMotorCost() {
     return 50 * Math.pow(3, this.motorLevel);
+  }
+  
+  getFrictionCost() {
+    return 100 * Math.pow(3.5, this.frictionLevel);
   }
   
   addJoules(amount) {
@@ -97,10 +105,21 @@ export class GameEngine {
     }
   }
   
+  buyFriction() {
+    const cost = this.getFrictionCost();
+    if (this.joules >= cost) {
+      this.joules -= cost;
+      this.frictionLevel++;
+      this.saveState();
+      this.updateUI();
+    }
+  }
+  
   bindEvents() {
     this.ui.buyLinkBtn.addEventListener('click', () => this.buyLink());
     this.ui.buySlingshotBtn.addEventListener('click', () => this.buySlingshot());
     this.ui.buyMotorBtn.addEventListener('click', () => this.buyMotor());
+    this.ui.buyFrictionBtn.addEventListener('click', () => this.buyFriction());
     
     // Save every 5 seconds
     setInterval(() => this.saveState(), 5000);
@@ -142,6 +161,12 @@ export class GameEngine {
     } else {
       this.ui.buyMotorBtn.classList.add('disabled');
     }
+    
+    if (this.joules >= this.getFrictionCost()) {
+      this.ui.buyFrictionBtn.classList.remove('disabled');
+    } else {
+      this.ui.buyFrictionBtn.classList.add('disabled');
+    }
   }
   
   updateUI() {
@@ -152,6 +177,8 @@ export class GameEngine {
     this.ui.slingshotCost.innerText = this.formatNumber(this.getSlingshotCost());
     this.ui.currentMotor.innerText = this.motorLevel;
     this.ui.motorCost.innerText = this.formatNumber(this.getMotorCost());
+    this.ui.currentFriction.innerText = this.frictionLevel;
+    this.ui.frictionCost.innerText = this.formatNumber(this.getFrictionCost());
     this.ui.constantsValue.innerText = this.universalConstants;
   }
   
@@ -169,6 +196,7 @@ export class GameEngine {
       links: this.links,
       slingshotLevel: this.slingshotLevel,
       motorLevel: this.motorLevel,
+      frictionLevel: this.frictionLevel,
       universalConstants: this.universalConstants,
       cHeat: this.cHeat
     };
@@ -184,6 +212,7 @@ export class GameEngine {
         this.links = state.links || 1;
         this.slingshotLevel = state.slingshotLevel || 1;
         this.motorLevel = state.motorLevel || 0;
+        this.frictionLevel = state.frictionLevel || 0;
         this.universalConstants = state.universalConstants || 0;
         this.cHeat = state.cHeat || 1.0;
       } catch(e) {

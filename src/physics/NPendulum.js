@@ -85,12 +85,8 @@ export class NPendulum {
       if (this.state[this.N] < 0) this.state[this.N] = 0;
     }
 
-    // Hard limit global angular velocity to prevent RK4 matrix explosions
-    const MAX_OMEGA = 35;
-    for (let i = 0; i < this.N; i++) {
-      if (this.state[this.N + i] > MAX_OMEGA) this.state[this.N + i] = MAX_OMEGA;
-      if (this.state[this.N + i] < -MAX_OMEGA) this.state[this.N + i] = -MAX_OMEGA;
-    }
+    // Inelastic Hard Ceiling enforces boundary without bounding velocity globally
+
 
     const pos = this.getPositions();
     const lastBob = pos[pos.length - 1];
