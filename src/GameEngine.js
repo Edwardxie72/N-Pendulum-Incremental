@@ -5,6 +5,7 @@ export class GameEngine {
     this.links = 1;
     this.maxLinks = 10;
     this.slingshotLevel = 1;
+    this.motorLevel = 0;
     this.universalConstants = 0;
     this.cHeat = 1.0; // Prestige multiplier
     
@@ -24,6 +25,9 @@ export class GameEngine {
       currentSlingshot: document.getElementById('currentSlingshot'),
       slingshotCost: document.getElementById('slingshotCost'),
       buySlingshotBtn: document.querySelector('#buy-slingshot-btn button'),
+      currentMotor: document.getElementById('currentMotor'),
+      motorCost: document.getElementById('motorCost'),
+      buyMotorBtn: document.querySelector('#buy-motor-btn button'),
       constantsValue: document.getElementById('constantsValue'),
       heatDeathBtn: document.getElementById('heatDeathBtn')
     };
@@ -44,6 +48,10 @@ export class GameEngine {
   
   getSlingshotCost() {
     return 5 * Math.pow(2.5, this.slingshotLevel - 1);
+  }
+  
+  getMotorCost() {
+    return 50 * Math.pow(3, this.motorLevel);
   }
   
   addJoules(amount) {
@@ -79,9 +87,20 @@ export class GameEngine {
     }
   }
   
+  buyMotor() {
+    const cost = this.getMotorCost();
+    if (this.joules >= cost) {
+      this.joules -= cost;
+      this.motorLevel++;
+      this.saveState();
+      this.updateUI();
+    }
+  }
+  
   bindEvents() {
     this.ui.buyLinkBtn.addEventListener('click', () => this.buyLink());
     this.ui.buySlingshotBtn.addEventListener('click', () => this.buySlingshot());
+    this.ui.buyMotorBtn.addEventListener('click', () => this.buyMotor());
     
     // Save every 5 seconds
     setInterval(() => this.saveState(), 5000);
@@ -117,6 +136,12 @@ export class GameEngine {
     } else {
       this.ui.buySlingshotBtn.classList.add('disabled');
     }
+    
+    if (this.joules >= this.getMotorCost()) {
+      this.ui.buyMotorBtn.classList.remove('disabled');
+    } else {
+      this.ui.buyMotorBtn.classList.add('disabled');
+    }
   }
   
   updateUI() {
@@ -125,6 +150,8 @@ export class GameEngine {
     this.ui.linkCost.innerText = this.formatNumber(this.getLinkCost());
     this.ui.currentSlingshot.innerText = this.slingshotLevel;
     this.ui.slingshotCost.innerText = this.formatNumber(this.getSlingshotCost());
+    this.ui.currentMotor.innerText = this.motorLevel;
+    this.ui.motorCost.innerText = this.formatNumber(this.getMotorCost());
     this.ui.constantsValue.innerText = this.universalConstants;
   }
   
@@ -141,6 +168,7 @@ export class GameEngine {
       joules: this.joules,
       links: this.links,
       slingshotLevel: this.slingshotLevel,
+      motorLevel: this.motorLevel,
       universalConstants: this.universalConstants,
       cHeat: this.cHeat
     };
@@ -155,6 +183,7 @@ export class GameEngine {
         this.joules = state.joules || 0;
         this.links = state.links || 1;
         this.slingshotLevel = state.slingshotLevel || 1;
+        this.motorLevel = state.motorLevel || 0;
         this.universalConstants = state.universalConstants || 0;
         this.cHeat = state.cHeat || 1.0;
       } catch(e) {

@@ -100,6 +100,18 @@ export class SimulationEngine {
     if (!this.pendulum) return;
     this.pendulum.update(dt);
     
+    const motorLvl = this.gameEngine.motorLevel;
+    if (motorLvl > 0) {
+      const minSpeed = 0.5 * motorLvl;
+      for (let i = 0; i < this.pendulum.N; i++) {
+        let w = this.pendulum.state[this.pendulum.N + i];
+        if (w > -minSpeed && w < minSpeed) {
+           // Inject artificial velocity to maintain minimum speed
+           this.pendulum.state[this.pendulum.N + i] += (w >= 0 ? 1 : -1) * minSpeed * dt * 5;
+        }
+      }
+    }
+    
     const ke = this.pendulum.getKineticEnergy();
     if (ke > 0.01) {
       this.gameEngine.addJoules(ke * dt * 0.01); // 10x slower initial generation
