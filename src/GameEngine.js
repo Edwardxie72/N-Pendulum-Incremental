@@ -110,6 +110,8 @@ export class GameEngine {
       } else {
         this.ui.buyLinkBtn.classList.add('disabled');
       }
+    }
+    
     if (this.joules >= this.getSlingshotCost()) {
       this.ui.buySlingshotBtn.classList.remove('disabled');
     } else {
