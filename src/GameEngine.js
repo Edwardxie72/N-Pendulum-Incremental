@@ -161,8 +161,24 @@ export class GameEngine {
   
   hardReset() {
     this.isResetting = true;
-    localStorage.removeItem('entropyEngineSave');
-    location.reload();
+    
+    // Explicitly zero memory
+    this.joules = 0;
+    this.totalJoulesEarned = 0;
+    this.links = 1;
+    this.slingshotLevel = 1;
+    this.motorLevel = 0;
+    this.frictionLevel = 0;
+    this.loopLevel = 0;
+    this.jouleMultiplierLevel = 0;
+    this.universalConstants = 0;
+    this.cHeat = 1.0;
+    
+    // Purge storage
+    localStorage.clear();
+    
+    // Hard redirect
+    window.location.replace(window.location.pathname);
   }
 
   getPendingConstants() {
