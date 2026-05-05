@@ -93,12 +93,16 @@ export class NPendulum {
     for (let i = 0; i < this.N; i++) {
         let currentAngle = this.state[i];
         let diff = currentAngle - this.lastRewardAngles[i];
+        
+        let cx = i === 0 ? this.x : pos[i - 1].x;
+        let cy = i === 0 ? this.y : pos[i - 1].y;
+        
         if (diff >= 2 * Math.PI) {
             this.lastRewardAngles[i] += 2 * Math.PI;
-            this.loopEvents.push({ linkIndex: i, x: pos[i].x, y: pos[i].y });
+            this.loopEvents.push({ linkIndex: i, x: pos[i].x, y: pos[i].y, cx: cx, cy: cy, r: this.l });
         } else if (diff <= -2 * Math.PI) {
             this.lastRewardAngles[i] -= 2 * Math.PI;
-            this.loopEvents.push({ linkIndex: i, x: pos[i].x, y: pos[i].y });
+            this.loopEvents.push({ linkIndex: i, x: pos[i].x, y: pos[i].y, cx: cx, cy: cy, r: this.l });
         }
         
         let currentAbsAngle = this.state[i];

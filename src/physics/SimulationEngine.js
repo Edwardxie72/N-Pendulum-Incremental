@@ -153,9 +153,9 @@ export class SimulationEngine {
             color: colorStr
         });
         this.expandingCircles.push({
-            x: event.x,
-            y: event.y,
-            radius: 10,
+            x: event.cx,
+            y: event.cy,
+            radius: event.r,
             life: 1.0,
             color: colorStr
         });
