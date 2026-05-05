@@ -3,73 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>N-Pendulum Simulator</title>
+  <title>The Entropy Engine</title>
   <link rel="stylesheet" href="./src/index.css" />
-  <link rel="stylesheet" href="./src/components/SetupScreen.css" />
-  <link rel="stylesheet" href="./src/components/SimulationScreen.css" />
 </head>
 <body>
-  
-  <div id="setup-screen" class="setup-container">
-    <div class="glass-panel setup-panel">
-      <h1 class="title">N-Pendulum Simulator</h1>
-      <p class="subtitle">Visualize Chaos Theory</p>
-
-      <form id="setup-form" class="setup-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label>Num Pendulums</label>
-            <input type="number" id="numPendulums" value="100" min="1" max="1000" />
-          </div>
-          <div class="form-group">
-            <label>Links per Pendulum</label>
-            <input type="number" id="links" value="2" min="1" max="10" />
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>Starting Angle (rad)</label>
-            <input type="number" step="0.01" id="baseAngle" value="1.57" />
-          </div>
-          <div class="form-group">
-            <label>Random Variance (ε)</label>
-            <input type="number" step="0.00001" id="variance" value="0.0001" />
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>Link Length</label>
-            <input type="number" id="linkLength" value="100" />
-          </div>
-          <div class="form-group">
-            <label>Link Mass</label>
-            <input type="number" id="linkMass" value="10" />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Gravity (m/s²)</label>
-          <input type="number" step="0.1" id="gravity" value="9.8" />
-        </div>
-
-        <button type="submit" class="btn-primary start-btn">Start Simulation</button>
-      </form>
+  <div class="game-container">
+    <div class="canvas-container" id="canvasContainer">
+      <canvas id="trailCanvas" class="simulation-canvas"></canvas>
+      <canvas id="simulation-canvas" class="simulation-canvas"></canvas>
     </div>
-  </div>
-
-  <div id="simulation-screen" class="simulation-container" style="display: none;">
-    <canvas id="simulation-canvas" class="simulation-canvas"></canvas>
     
-    <div class="controls-overlay glass-panel">
-      <div class="stats">
-        <p><strong>N:</strong> <span id="stat-n"></span></p>
-        <p><strong>Var:</strong> <span id="stat-var"></span></p>
+    <div class="hud-container glass-panel">
+      <h1 class="title">The Entropy Engine</h1>
+      <p class="subtitle">Extract energy from chaos</p>
+
+      <div class="currency-display">
+        <div class="joule-counter">
+          <span id="jouleValue">0.00</span> <span style="font-size: 1.2rem; color: #fff;">Joules</span>
+        </div>
+        <div class="joule-rate">
+          +<span id="jouleRate">0.00</span> J/s
+        </div>
       </div>
-      <button id="back-btn" class="btn-primary back-btn">
-        ← Back to Setup
-      </button>
+
+      <div class="shop">
+        <h2>Chaos Upgrades</h2>
+        
+        <div class="shop-item" id="buy-link-btn">
+          <div class="item-info">
+            <span class="item-name">Add Chaos Link</span>
+            <span class="item-desc">Current Links: <span id="currentLinks">1</span> / 10</span>
+          </div>
+          <button class="btn-primary">Cost: <span id="linkCost">10</span> J</button>
+        </div>
+      </div>
+      
+      <div class="prestige-section">
+        <p class="constants-counter">Universal Constants: <span id="constantsValue">0</span></p>
+        <button id="heatDeathBtn" class="btn-danger" disabled>Initiate Heat Death</button>
+      </div>
     </div>
   </div>
 

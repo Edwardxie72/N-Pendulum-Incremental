@@ -1,26 +1,31 @@
 import { solveLinearSystem } from './MatrixMath.js';
 
 export class NPendulum {
-  constructor(x, y, config, initialThetas) {
+  constructor(x, y, N, config) {
     this.x = x;
     this.y = y;
-    
-    // config.links is the number of links N
-    this.N = config.links;
+    this.N = N;
     this.m = config.linkMass;
     this.l = config.linkLength;
-    this.g = config.gravity * 100; // Scale gravity for pixel units
+    this.g = config.gravity;
+    this.friction = config.friction;
 
-    // State is an array of size 2*N: [theta_0..theta_N-1, omega_0..omega_N-1]
     this.state = new Array(2 * this.N).fill(0);
     for (let i = 0; i < this.N; i++) {
-      this.state[i] = initialThetas[i];
-      // omega is already 0
+      this.state[i] = Math.PI / 2;
     }
     
-    // Trail positions for offscreen rendering (track the last bob)
     this.prevTrail = null;
     this.currTrail = null;
+  }
+
+  getKineticEnergy() {
+    let ke = 0;
+    const omegas = this.state.slice(this.N, 2 * this.N);
+    for(let i=0; i<this.N; i++) {
+      ke += 0.5 * this.m * (this.l/100)*(this.l/100) * omegas[i] * omegas[i];
+    }
+    return ke * Math.pow(this.N, 2.5); 
   }
 
   getDerivatives(state) {
@@ -45,27 +50,23 @@ export class NPendulum {
       for (let j = 0; j < N; j++) {
         sum += mu(i, j) * omegas[j] * omegas[j] * Math.sin(thetas[i] - thetas[j]);
       }
-      C[i] = -sum - (g / l) * mu(i, i) * Math.sin(thetas[i]);
+      const damping = this.friction * omegas[i];
+      C[i] = -sum - (g / l) * mu(i, i) * Math.sin(thetas[i]) - damping;
     }
 
     const alphas = solveLinearSystem(M, C);
 
-    // Return [omegas, alphas]
     return [...omegas, ...alphas];
   }
 
   update(dt) {
-    // RK4 Integration
     const s = this.state;
     
     const k1 = this.getDerivatives(s);
-    
     const s2 = s.map((val, i) => val + 0.5 * dt * k1[i]);
     const k2 = this.getDerivatives(s2);
-    
     const s3 = s.map((val, i) => val + 0.5 * dt * k2[i]);
     const k3 = this.getDerivatives(s3);
-    
     const s4 = s.map((val, i) => val + dt * k3[i]);
     const k4 = this.getDerivatives(s4);
 
@@ -73,7 +74,6 @@ export class NPendulum {
       this.state[i] += (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
     }
 
-    // Calculate positions
     const pos = this.getPositions();
     const lastBob = pos[pos.length - 1];
     
@@ -81,7 +81,6 @@ export class NPendulum {
     this.currTrail = { x: lastBob.x, y: lastBob.y };
   }
 
-  // Returns array of positions for each bob [{x,y}, {x,y}, ...]
   getPositions() {
     const pos = [];
     let currentX = this.x;

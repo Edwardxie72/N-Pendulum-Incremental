@@ -1,46 +1,41 @@
 import { SimulationEngine } from './physics/SimulationEngine.js';
+import { GameEngine } from './GameEngine.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const setupScreen = document.getElementById('setup-screen');
-  const simulationScreen = document.getElementById('simulation-screen');
-  const setupForm = document.getElementById('setup-form');
-  const backBtn = document.getElementById('back-btn');
-  const canvas = document.getElementById('simulation-canvas');
+  const simCanvas = document.getElementById('simulation-canvas');
+  const trailCanvas = document.getElementById('trailCanvas');
+
+  // Resize canvas to fill the container
+  function resizeCanvas() {
+    const container = document.getElementById('canvasContainer');
+    simCanvas.width = container.clientWidth;
+    simCanvas.height = container.clientHeight;
+    trailCanvas.width = container.clientWidth;
+    trailCanvas.height = container.clientHeight;
+  }
   
-  const statN = document.getElementById('stat-n');
-  const statVar = document.getElementById('stat-var');
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
 
-  let engine = null;
-
-  setupForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const config = {
-      numPendulums: Number(document.getElementById('numPendulums').value),
-      links: Number(document.getElementById('links').value),
-      baseAngle: Number(document.getElementById('baseAngle').value),
-      variance: Number(document.getElementById('variance').value),
-      linkLength: Number(document.getElementById('linkLength').value),
-      linkMass: Number(document.getElementById('linkMass').value),
-      gravity: Number(document.getElementById('gravity').value),
-    };
-
-    statN.textContent = config.numPendulums;
-    statVar.textContent = config.variance;
-
-    setupScreen.style.display = 'none';
-    simulationScreen.style.display = 'block';
-
-    engine = new SimulationEngine(canvas, config);
-    engine.start();
-  });
-
-  backBtn.addEventListener('click', () => {
-    if (engine) {
-      engine.stop();
-      engine = null;
-    }
-    simulationScreen.style.display = 'none';
-    setupScreen.style.display = 'flex'; // It uses flexbox in CSS
-  });
+  // Initialize GameEngine which manages state and currency
+  const game = new GameEngine();
+  
+  // Create physics engine
+  const simulation = new SimulationEngine(simCanvas, trailCanvas, game);
+  game.setSimulation(simulation);
+  
+  // Start loop
+  let lastTime = performance.now();
+  function loop(currentTime) {
+    const dt = Math.min((currentTime - lastTime) / 1000, 0.1); // Cap dt to prevent explosion on tab switch
+    lastTime = currentTime;
+    
+    simulation.update(dt);
+    simulation.draw();
+    game.update(dt);
+    
+    requestAnimationFrame(loop);
+  }
+  
+  requestAnimationFrame(loop);
 });
