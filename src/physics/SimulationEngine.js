@@ -117,9 +117,13 @@ export class SimulationEngine {
     if (this.pendulum.boostEvents && this.pendulum.boostEvents.length > 0) {
       if (motorLvl > 0) {
         const boostAmount = motorLvl * 0.05;
+        const maxMotorSpeed = motorLvl * 0.5; // Cap speed that motor will boost up to
         for (const event of this.pendulum.boostEvents) {
           if (event.linkIndex === 0) {
-            this.pendulum.state[this.pendulum.N + event.linkIndex] += boostAmount * event.direction;
+            const currentSpeed = this.pendulum.state[this.pendulum.N + event.linkIndex];
+            if (Math.abs(currentSpeed) < maxMotorSpeed) {
+              this.pendulum.state[this.pendulum.N + event.linkIndex] += boostAmount * event.direction;
+            }
           }
         }
       }
