@@ -54,18 +54,40 @@ export class SimulationEngine {
     
     let cx = this.simCanvas.width / 2;
     let cy = this.simCanvas.height / 3;
+    let maxRadius = 100;
     
-    // Adjust for responsive UI overlays
+    // Adjust for responsive UI overlays and compute safe max radius
     if (window.innerWidth >= 768) {
       // Offset by half of the 380px side panel + 20px padding
-      cx = (this.simCanvas.width - 400) / 2;
+      const availableWidth = this.simCanvas.width - 400;
+      cx = availableWidth / 2;
+      cy = this.simCanvas.height * 0.45; // Center vertically
+      
+      const maxHorizontal = availableWidth / 2 - 40; // 40px padding
+      const maxUp = cy - 100; // Leave space for Top HUD
+      const maxDown = this.simCanvas.height - cy - 40;
+      
+      maxRadius = Math.max(50, Math.min(maxHorizontal, maxUp, maxDown));
     } else {
-      // Offset vertically to avoid the bottom sheet covering the bottom 45%
-      cy = this.simCanvas.height * 0.22;
+      // Mobile: Bottom sheet covers bottom 45% (so ~55% is safe)
+      cx = this.simCanvas.width / 2;
+      cy = this.simCanvas.height * 0.28; // Center in the top 55%
+      
+      const maxHorizontal = this.simCanvas.width / 2 - 20; // 20px padding
+      const maxUp = cy - 120; // Leave space for Top HUD
+      const maxDown = (this.simCanvas.height * 0.52) - cy; // Leave space for Bottom Sheet
+      
+      maxRadius = Math.max(50, Math.min(maxHorizontal, maxUp, maxDown));
     }
     
     this.pendulum.x = cx;
     this.pendulum.y = cy;
+    
+    // Dynamically adjust pendulum length so the fully extended chain never goes off screen!
+    // We cap the max link length to 120 so it doesn't look comically huge when there's only 1 link.
+    const targetLength = Math.min(120, maxRadius / this.pendulum.N);
+    this.pendulum.l = targetLength;
+    this.config.linkLength = targetLength;
   }
   
   bindEvents() {
