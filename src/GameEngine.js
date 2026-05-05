@@ -153,8 +153,7 @@ export class GameEngine {
   }
 
   getPendingConstants() {
-    if (this.totalJoulesEarned < 1e12) return 0;
-    return Math.floor(Math.pow(this.totalJoulesEarned / 1e12, 0.5)) - this.universalConstants;
+    return (this.links - 1) + (this.slingshotLevel - 1) + this.motorLevel + this.frictionLevel + this.loopLevel;
   }
 
   prestige() {
@@ -167,7 +166,7 @@ export class GameEngine {
       this.motorLevel = 0;
       this.frictionLevel = 0;
       this.loopLevel = 0;
-      this.cHeat = 1.0 + (this.universalConstants * 0.1);
+      this.cHeat = 1.0;
       this.saveState();
       location.reload();
     }
@@ -249,8 +248,7 @@ export class GameEngine {
       this.ui.prestigeBtn.innerText = `Entropic Rebirth (+${this.formatNumber(pending)} Constants)`;
     } else {
       this.ui.prestigeBtn.classList.add('disabled');
-      const req = 1e12 * Math.pow(this.universalConstants + 1, 2);
-      this.ui.prestigeBtn.innerText = `Rebirth at ${this.formatNumber(req)} J`;
+      this.ui.prestigeBtn.innerText = `Rebirth at 1 Upgrade`;
     }
     
     if (this.joules >= 1e100) {
@@ -310,7 +308,7 @@ export class GameEngine {
         this.frictionLevel = state.frictionLevel || 0;
         this.loopLevel = state.loopLevel || 0;
         this.universalConstants = state.universalConstants || 0;
-        this.cHeat = 1.0 + (this.universalConstants * 0.1); // Recalculate based on loaded constants
+        this.cHeat = 1.0; // Disabled until Shop is added
         this.totalJoulesEarned = state.totalJoulesEarned || this.joules;
       } catch(e) {
         console.error("Save corrupted");
