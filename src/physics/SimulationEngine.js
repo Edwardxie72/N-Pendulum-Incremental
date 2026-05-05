@@ -83,6 +83,9 @@ export class SimulationEngine {
     if (!this.isDragging || !this.pendulum) return;
     this.isDragging = false;
     
+    const dx = this.dragStart.x - this.dragCurrent.x;
+    const dy = this.dragStart.y - this.dragCurrent.y;
+    
     const level = this.gameEngine.slingshotLevel;
     let impulse = (dx + dy) * 0.002 * level; 
     
