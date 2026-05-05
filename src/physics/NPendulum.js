@@ -74,14 +74,20 @@ export class NPendulum {
       this.state[i] += (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
     }
 
-    // Prevent spinning past the top (Invisible Ceiling) - only for the first link
-    const CEILING = Math.PI * 0.98; // Just before reaching the exact top
+    // Prevent spinning past the top (Soft Spring Wall) - only for the first link
+    const CEILING = Math.PI * 0.95; 
     if (this.state[0] > CEILING) {
-      this.state[0] = CEILING;
-      this.state[this.N] *= -0.6; // Bounce with energy loss
+      // Calculate how far past the top it went
+      const penetration = this.state[0] - CEILING;
+      // Apply a strong restorative spring force + heavy damping if it's moving further into the wall
+      if (this.state[this.N] > 0) {
+        this.state[this.N] -= (100 * penetration + 10 * this.state[this.N]) * dt; 
+      }
     } else if (this.state[0] < -CEILING) {
-      this.state[0] = -CEILING;
-      this.state[this.N] *= -0.6; // Bounce with energy loss
+      const penetration = this.state[0] - (-CEILING);
+      if (this.state[this.N] < 0) {
+        this.state[this.N] -= (100 * penetration + 10 * this.state[this.N]) * dt;
+      }
     }
 
     const pos = this.getPositions();
