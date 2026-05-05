@@ -1,17 +1,16 @@
-# N-Pendulum-Simulator
-Vibe coding with Antigravity
+# The Entropy Engine
 
-A chaotic N-link pendulum simulator built in Vanilla Javascript with high-performance Canvas rendering. Features a customizable generalized matrix solver to simulate everything from simple double pendulums to incredibly complex multi-link chaotic systems.
+An active, physics-based incremental idle game built entirely in Vanilla Javascript and HTML5 Canvas. 
 
-## Setup Configuration
-Configure the number of links, masses, lengths, and starting angles with a sleek glassmorphic UI before diving into the simulation.
+Rather than arbitrary numbers ticking up, **The Entropy Engine** generates currency (Joules) derived directly from the exact mathematical Kinetic Energy of a simulated N-link chaotic pendulum!
 
-![Setup Screen](assets/setup_screen.png)
+## Gameplay Mechanics
 
-## Simulations in Action
+* **The Joule Economy:** Drag and "slingshot" the pendulum bobs across the screen to inject massive bursts of angular momentum into the system. The total kinetic energy calculated per-frame by the Runge-Kutta physics integrator dictates your Joule generation rate.
+* **Chaos Links:** Spend Joules in the shop to add more links to your pendulum (up to a hard cap of 10). Each new link drastically increases the angular velocity and chaotic nature of the system, sending your energy generation into overdrive.
+* **Prestige System:** (Coming Soon) Initiate Heat Death to collapse the universe and harvest Universal Constants to permanently upgrade your physics multipliers.
 
-### Double Pendulum (2 Links)
-![Double Pendulum](assets/double_pendulum.webp)
+## Gameplay Demo
+Watch the slingshot mechanics and Joule economy in action:
 
-### Hexa Pendulum (6 Links)
-![Hexa Pendulum](assets/hexa_pendulum_v3.webp)
+![Gameplay Demo](assets/gameplay_demo.webp)
