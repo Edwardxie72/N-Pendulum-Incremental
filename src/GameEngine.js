@@ -60,7 +60,7 @@ export class GameEngine {
   }
   
   getSlingshotCost() {
-    return 5 * Math.pow(2.5, this.slingshotLevel - 1);
+    return 3 * Math.pow(2.5, this.slingshotLevel - 1);
   }
   
   getMotorCost() {
