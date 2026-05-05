@@ -160,17 +160,8 @@ export class GameEngine {
   }
   
   hardReset() {
-    this.joules = 0;
-    this.totalJoulesEarned = 0;
-    this.links = 1;
-    this.slingshotLevel = 1;
-    this.motorLevel = 0;
-    this.frictionLevel = 0;
-    this.loopLevel = 0;
-    this.jouleMultiplierLevel = 0;
-    this.universalConstants = 0;
-    this.cHeat = 1.0;
-    this.saveState();
+    this.isResetting = true;
+    localStorage.removeItem('entropyEngineSave');
     location.reload();
   }
 
@@ -315,6 +306,7 @@ export class GameEngine {
   }
   
   saveState() {
+    if (this.isResetting) return;
     const state = {
       joules: this.joules,
       links: this.links,
