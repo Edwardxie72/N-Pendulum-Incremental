@@ -8,6 +8,7 @@ export class GameEngine {
     this.motorLevel = 0;
     this.frictionLevel = 0;
     this.loopLevel = 0;
+    this.jouleMultiplierLevel = 0;
     this.universalConstants = 0;
     this.cHeat = 1.0; // Prestige multiplier
     
@@ -36,6 +37,9 @@ export class GameEngine {
       currentLoop: document.getElementById('currentLoop'),
       loopCost: document.getElementById('loopCost'),
       buyLoopBtn: document.querySelector('#buy-loop-btn button'),
+      currentJouleMultiplier: document.getElementById('currentJouleMultiplier'),
+      jouleMultiplierCost: document.getElementById('jouleMultiplierCost'),
+      buyJouleMultiplierBtn: document.querySelector('#buy-joule-multiplier-btn button'),
       constantsValue: document.getElementById('constantsValue'),
       prestigeBtn: document.getElementById('prestigeBtn'),
       heatDeathBtn: document.getElementById('heatDeathBtn')
@@ -52,7 +56,7 @@ export class GameEngine {
   }
   
   getLinkCost() {
-    return 100 * Math.pow(100, this.links - 1);
+    return Math.pow(10, 2 + ((this.links - 1) * (this.links + 2) / 2));
   }
   
   getSlingshotCost() {
@@ -75,8 +79,15 @@ export class GameEngine {
     return 10 * Math.pow(10, this.links - 1) * Math.pow(1.1, this.loopLevel);
   }
   
-  addJoules(amount) {
-    const finalAmount = amount * this.cHeat;
+  getJouleMultiplierCost() {
+    return 100 * Math.pow(5, this.jouleMultiplierLevel);
+  }
+  
+  addJoules(amount, isBaseKinetic = false) {
+    let finalAmount = amount;
+    if (isBaseKinetic) {
+      finalAmount *= Math.pow(2, this.jouleMultiplierLevel);
+    }
     this.joules += finalAmount;
     this.totalJoulesEarned += finalAmount;
     this.joulesThisSecond += finalAmount;
@@ -138,6 +149,16 @@ export class GameEngine {
     }
   }
   
+  buyJouleMultiplier() {
+    const cost = this.getJouleMultiplierCost();
+    if (this.joules >= cost) {
+      this.joules -= cost;
+      this.jouleMultiplierLevel++;
+      this.saveState();
+      this.updateUI();
+    }
+  }
+  
   hardReset() {
     this.joules = 0;
     this.totalJoulesEarned = 0;
@@ -146,6 +167,7 @@ export class GameEngine {
     this.motorLevel = 0;
     this.frictionLevel = 0;
     this.loopLevel = 0;
+    this.jouleMultiplierLevel = 0;
     this.universalConstants = 0;
     this.cHeat = 1.0;
     this.saveState();
@@ -153,7 +175,7 @@ export class GameEngine {
   }
 
   getPendingConstants() {
-    return (this.links - 1) + (this.slingshotLevel - 1) + this.motorLevel + this.frictionLevel + this.loopLevel;
+    return (this.links - 1) + (this.slingshotLevel - 1) + this.motorLevel + this.frictionLevel + this.loopLevel + this.jouleMultiplierLevel;
   }
 
   prestige() {
@@ -166,6 +188,7 @@ export class GameEngine {
       this.motorLevel = 0;
       this.frictionLevel = 0;
       this.loopLevel = 0;
+      this.jouleMultiplierLevel = 0;
       this.cHeat = 1.0;
       this.saveState();
       location.reload();
@@ -178,6 +201,7 @@ export class GameEngine {
     this.ui.buyMotorBtn.addEventListener('click', () => this.buyMotor());
     this.ui.buyFrictionBtn.addEventListener('click', () => this.buyFriction());
     this.ui.buyLoopBtn.addEventListener('click', () => this.buyLoop());
+    this.ui.buyJouleMultiplierBtn.addEventListener('click', () => this.buyJouleMultiplier());
     
     this.ui.prestigeBtn.addEventListener('click', () => {
       if (confirm("Are you sure you want to undergo Entropic Rebirth? You will lose all current Joules and Upgrades, but gain a permanent production multiplier!")) {
@@ -242,6 +266,12 @@ export class GameEngine {
       this.ui.buyLoopBtn.classList.add('disabled');
     }
     
+    if (this.joules >= this.getJouleMultiplierCost()) {
+      this.ui.buyJouleMultiplierBtn.classList.remove('disabled');
+    } else {
+      this.ui.buyJouleMultiplierBtn.classList.add('disabled');
+    }
+    
     const pending = this.getPendingConstants();
     if (pending > 0) {
       this.ui.prestigeBtn.classList.remove('disabled');
@@ -270,6 +300,8 @@ export class GameEngine {
     this.ui.frictionCost.innerText = this.formatNumber(this.getFrictionCost());
     this.ui.currentLoop.innerText = this.loopLevel;
     this.ui.loopCost.innerText = this.formatNumber(this.getLoopCost());
+    this.ui.currentJouleMultiplier.innerText = this.jouleMultiplierLevel;
+    this.ui.jouleMultiplierCost.innerText = this.formatNumber(this.getJouleMultiplierCost());
     this.ui.constantsValue.innerText = this.formatNumber(this.universalConstants);
   }
   
@@ -290,6 +322,7 @@ export class GameEngine {
       motorLevel: this.motorLevel,
       frictionLevel: this.frictionLevel,
       loopLevel: this.loopLevel,
+      jouleMultiplierLevel: this.jouleMultiplierLevel,
       universalConstants: this.universalConstants,
       cHeat: this.cHeat
     };
@@ -307,6 +340,7 @@ export class GameEngine {
         this.motorLevel = state.motorLevel || 0;
         this.frictionLevel = state.frictionLevel || 0;
         this.loopLevel = state.loopLevel || 0;
+        this.jouleMultiplierLevel = state.jouleMultiplierLevel || 0;
         this.universalConstants = state.universalConstants || 0;
         this.cHeat = 1.0; // Disabled until Shop is added
         this.totalJoulesEarned = state.totalJoulesEarned || this.joules;

@@ -132,7 +132,7 @@ export class SimulationEngine {
     
     const ke = this.pendulum.getKineticEnergy();
     if (ke > 0.01) {
-      this.gameEngine.addJoules(ke * dt * 0.01); // 10x slower initial generation
+      this.gameEngine.addJoules(ke * dt * 0.01, true); // 10x slower initial generation
     }
     
     if (this.pendulum.loopEvents && this.pendulum.loopEvents.length > 0) {
