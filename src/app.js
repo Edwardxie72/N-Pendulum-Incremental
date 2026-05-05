@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
   requestAnimationFrame(loop);
   
   // Debug Features
-  const DEBUG = false; // Set to true locally to enable debug features
+  const DEBUG = true; // Set to true locally to enable debug features
   if (DEBUG) {
     const resetBtn = document.getElementById('reset-btn');
     if (resetBtn) {

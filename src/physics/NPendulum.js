@@ -73,19 +73,6 @@ export class NPendulum {
     for (let i = 0; i < 2 * this.N; i++) {
       this.state[i] += (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
     }
-
-    // Prevent spinning past the top (Inelastic Hard Ceiling) - only for the first link
-    const CEILING = Math.PI * 0.98; 
-    if (this.state[0] > CEILING) {
-      this.state[0] = CEILING;
-      // Kill upward velocity, let gravity pull it back down
-      if (this.state[this.N] > 0) this.state[this.N] = 0; 
-    } else if (this.state[0] < -CEILING) {
-      this.state[0] = -CEILING;
-      if (this.state[this.N] < 0) this.state[this.N] = 0;
-    }
-
-    // Inelastic Hard Ceiling enforces boundary without bounding velocity globally
     
     // Safety limit to prevent Runge-Kutta numerical explosion (NaN)
     // 100 rad/s is visually unlimited (~16 rev/sec) but saves the matrix math
