@@ -86,7 +86,7 @@ export class SimulationEngine {
     const dx = this.dragStart.x - this.dragCurrent.x;
     const dy = this.dragStart.y - this.dragCurrent.y;
     
-    const level = this.gameEngine.slingshotLevel;
+    const level = this.gameEngine.slingshotLevel || 1;
     let impulse = (dx + dy) * 0.002 * level; 
     
     // Cap the maximum velocity you can inject with a single slingshot
@@ -103,12 +103,13 @@ export class SimulationEngine {
     if (!this.pendulum) return;
     
     // Dynamically apply friction upgrades (Base 1.2, drops by 15% per level)
-    const frictionLvl = this.gameEngine.frictionLevel;
+    // We add || 0 to protect against browser caching old GameEngine.js versions!
+    const frictionLvl = this.gameEngine.frictionLevel || 0;
     this.pendulum.config.friction = 1.2 * Math.pow(0.85, frictionLvl);
     
     this.pendulum.update(dt);
     
-    const motorLvl = this.gameEngine.motorLevel;
+    const motorLvl = this.gameEngine.motorLevel || 0;
     if (motorLvl > 0) {
       const minSpeed = 0.5 * motorLvl;
       for (let i = 0; i < this.pendulum.N; i++) {
