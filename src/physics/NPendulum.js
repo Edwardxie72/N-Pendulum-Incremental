@@ -86,7 +86,14 @@ export class NPendulum {
     }
 
     // Inelastic Hard Ceiling enforces boundary without bounding velocity globally
-
+    
+    // Safety limit to prevent Runge-Kutta numerical explosion (NaN)
+    // 100 rad/s is visually unlimited (~16 rev/sec) but saves the matrix math
+    const MAX_OMEGA = 100;
+    for (let i = 0; i < this.N; i++) {
+      if (this.state[this.N + i] > MAX_OMEGA) this.state[this.N + i] = MAX_OMEGA;
+      if (this.state[this.N + i] < -MAX_OMEGA) this.state[this.N + i] = -MAX_OMEGA;
+    }
 
     const pos = this.getPositions();
     const lastBob = pos[pos.length - 1];
