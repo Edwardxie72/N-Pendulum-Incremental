@@ -100,11 +100,11 @@ export class NPendulum {
         if (diffAbs >= 2 * Math.PI) {
             this.lastRewardAnglesAbs[i] += 2 * Math.PI;
             let dist = Math.hypot(pos[i].x - this.x, pos[i].y - this.y);
-            this.loopEvents.push({ linkIndex: i, cx: this.x, cy: this.y, r: dist });
+            this.loopEvents.push({ linkIndex: i, x: pos[i].x, y: pos[i].y, cx: this.x, cy: this.y, r: dist });
         } else if (diffAbs <= -2 * Math.PI) {
             this.lastRewardAnglesAbs[i] -= 2 * Math.PI;
             let dist = Math.hypot(pos[i].x - this.x, pos[i].y - this.y);
-            this.loopEvents.push({ linkIndex: i, cx: this.x, cy: this.y, r: dist });
+            this.loopEvents.push({ linkIndex: i, x: pos[i].x, y: pos[i].y, cx: this.x, cy: this.y, r: dist });
         }
         
         // Relative Loop (Local loop around the parent)
@@ -114,10 +114,10 @@ export class NPendulum {
             
             if (diffRel >= 2 * Math.PI) {
                 this.lastRewardAnglesRel[i] += 2 * Math.PI;
-                this.loopEvents.push({ linkIndex: i, cx: pos[i - 1].x, cy: pos[i - 1].y, r: this.l });
+                this.loopEvents.push({ linkIndex: i, x: pos[i].x, y: pos[i].y, cx: pos[i - 1].x, cy: pos[i - 1].y, r: this.l });
             } else if (diffRel <= -2 * Math.PI) {
                 this.lastRewardAnglesRel[i] -= 2 * Math.PI;
-                this.loopEvents.push({ linkIndex: i, cx: pos[i - 1].x, cy: pos[i - 1].y, r: this.l });
+                this.loopEvents.push({ linkIndex: i, x: pos[i].x, y: pos[i].y, cx: pos[i - 1].x, cy: pos[i - 1].y, r: this.l });
             }
         }
         
