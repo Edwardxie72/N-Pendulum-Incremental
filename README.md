@@ -15,4 +15,7 @@ Rather than arbitrary numbers ticking up, **The Entropy Engine** generates curre
 ## Gameplay Demo
 Watch the slingshot mechanics and Joule economy in action:
 
-![Gameplay Demo](assets/gameplay_demo.webp)
+![Desktop Demo](assets/gameplay_demo.webp)
+
+**Mobile View:**
+![Mobile Demo](assets/mobile_demo.webp)
