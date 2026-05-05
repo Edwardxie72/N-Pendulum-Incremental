@@ -11,12 +11,15 @@ export class NPendulum {
     this.friction = config.friction;
 
     this.state = new Array(2 * this.N).fill(0);
+    this.lastRewardAngles = new Array(this.N).fill(0);
     for (let i = 0; i < this.N; i++) {
       this.state[i] = Math.PI / 2;
+      this.lastRewardAngles[i] = Math.PI / 2;
     }
     
-    this.prevTrail = null;
-    this.currTrail = null;
+    this.loopEvents = [];
+    this.prevTrails = null;
+    this.currTrails = null;
   }
 
   getKineticEnergy() {
@@ -83,10 +86,26 @@ export class NPendulum {
     }
 
     const pos = this.getPositions();
-    const lastBob = pos[pos.length - 1];
     
-    this.prevTrail = this.currTrail ? { ...this.currTrail } : { x: lastBob.x, y: lastBob.y };
-    this.currTrail = { x: lastBob.x, y: lastBob.y };
+    // Loop detection logic
+    for (let i = 0; i < this.N; i++) {
+        let diff = this.state[i] - this.lastRewardAngles[i];
+        if (diff >= 2 * Math.PI) {
+            this.lastRewardAngles[i] += 2 * Math.PI;
+            this.loopEvents.push({ linkIndex: i, x: pos[i].x, y: pos[i].y });
+        } else if (diff <= -2 * Math.PI) {
+            this.lastRewardAngles[i] -= 2 * Math.PI;
+            this.loopEvents.push({ linkIndex: i, x: pos[i].x, y: pos[i].y });
+        }
+    }
+    
+    // Multi-trail tracking
+    if (this.currTrails) {
+      this.prevTrails = this.currTrails.map(p => ({ x: p.x, y: p.y }));
+    } else {
+      this.prevTrails = pos.map(p => ({ x: p.x, y: p.y }));
+    }
+    this.currTrails = pos.map(p => ({ x: p.x, y: p.y }));
   }
 
   getPositions() {

@@ -7,6 +7,7 @@ export class GameEngine {
     this.slingshotLevel = 1;
     this.motorLevel = 0;
     this.frictionLevel = 0;
+    this.loopLevel = 0;
     this.universalConstants = 0;
     this.cHeat = 1.0; // Prestige multiplier
     
@@ -32,6 +33,9 @@ export class GameEngine {
       currentFriction: document.getElementById('currentFriction'),
       frictionCost: document.getElementById('frictionCost'),
       buyFrictionBtn: document.querySelector('#buy-friction-btn button'),
+      currentLoop: document.getElementById('currentLoop'),
+      loopCost: document.getElementById('loopCost'),
+      buyLoopBtn: document.querySelector('#buy-loop-btn button'),
       constantsValue: document.getElementById('constantsValue'),
       heatDeathBtn: document.getElementById('heatDeathBtn')
     };
@@ -47,7 +51,7 @@ export class GameEngine {
   }
   
   getLinkCost() {
-    return 10 * Math.pow(100, this.links - 1);
+    return 100 * Math.pow(100, this.links - 1);
   }
   
   getSlingshotCost() {
@@ -60,6 +64,14 @@ export class GameEngine {
   
   getFrictionCost() {
     return 100 * Math.pow(3.5, this.frictionLevel);
+  }
+  
+  getLoopCost() {
+    return 200 * Math.pow(2.5, this.loopLevel);
+  }
+  
+  calculateLoopBonus() {
+    return 10 * Math.pow(10, this.links - 1) * Math.pow(1.1, this.loopLevel);
   }
   
   addJoules(amount) {
@@ -115,11 +127,22 @@ export class GameEngine {
     }
   }
   
+  buyLoop() {
+    const cost = this.getLoopCost();
+    if (this.joules >= cost) {
+      this.joules -= cost;
+      this.loopLevel++;
+      this.saveState();
+      this.updateUI();
+    }
+  }
+  
   bindEvents() {
     this.ui.buyLinkBtn.addEventListener('click', () => this.buyLink());
     this.ui.buySlingshotBtn.addEventListener('click', () => this.buySlingshot());
     this.ui.buyMotorBtn.addEventListener('click', () => this.buyMotor());
     this.ui.buyFrictionBtn.addEventListener('click', () => this.buyFriction());
+    this.ui.buyLoopBtn.addEventListener('click', () => this.buyLoop());
     
     // Save every 5 seconds
     setInterval(() => this.saveState(), 5000);
@@ -167,6 +190,12 @@ export class GameEngine {
     } else {
       this.ui.buyFrictionBtn.classList.add('disabled');
     }
+    
+    if (this.joules >= this.getLoopCost()) {
+      this.ui.buyLoopBtn.classList.remove('disabled');
+    } else {
+      this.ui.buyLoopBtn.classList.add('disabled');
+    }
   }
   
   updateUI() {
@@ -179,15 +208,18 @@ export class GameEngine {
     this.ui.motorCost.innerText = this.formatNumber(this.getMotorCost());
     this.ui.currentFriction.innerText = this.frictionLevel;
     this.ui.frictionCost.innerText = this.formatNumber(this.getFrictionCost());
-    this.ui.constantsValue.innerText = this.universalConstants;
+    this.ui.currentLoop.innerText = this.loopLevel;
+    this.ui.loopCost.innerText = this.formatNumber(this.getLoopCost());
+    this.ui.constantsValue.innerText = this.formatNumber(this.universalConstants);
   }
   
   formatNumber(num) {
+    if (num === 0) return "0.00";
     if (num < 1000) return num.toFixed(2);
-    if (num < 1e6) return (num / 1000).toFixed(2) + 'k';
-    if (num < 1e9) return (num / 1e6).toFixed(2) + 'M';
-    if (num < 1e12) return (num / 1e9).toFixed(2) + 'B';
-    return num.toExponential(2);
+    const exponent = Math.floor(Math.log10(num));
+    const engExponent = exponent - (exponent % 3);
+    const mantissa = num / Math.pow(10, engExponent);
+    return mantissa.toFixed(2) + 'e' + engExponent;
   }
   
   saveState() {
@@ -197,6 +229,7 @@ export class GameEngine {
       slingshotLevel: this.slingshotLevel,
       motorLevel: this.motorLevel,
       frictionLevel: this.frictionLevel,
+      loopLevel: this.loopLevel,
       universalConstants: this.universalConstants,
       cHeat: this.cHeat
     };
@@ -213,6 +246,7 @@ export class GameEngine {
         this.slingshotLevel = state.slingshotLevel || 1;
         this.motorLevel = state.motorLevel || 0;
         this.frictionLevel = state.frictionLevel || 0;
+        this.loopLevel = state.loopLevel || 0;
         this.universalConstants = state.universalConstants || 0;
         this.cHeat = state.cHeat || 1.0;
       } catch(e) {

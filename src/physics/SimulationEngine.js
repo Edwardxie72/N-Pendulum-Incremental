@@ -16,6 +16,8 @@ export class SimulationEngine {
     };
     
     this.pendulum = null;
+    this.floatingTexts = [];
+    this.expandingCircles = [];
     
     this.isDragging = false;
     this.dragStart = { x: 0, y: 0 };
@@ -125,6 +127,47 @@ export class SimulationEngine {
     if (ke > 0.01) {
       this.gameEngine.addJoules(ke * dt * 0.01); // 10x slower initial generation
     }
+    
+    if (this.pendulum.loopEvents && this.pendulum.loopEvents.length > 0) {
+      const bonus = this.gameEngine.calculateLoopBonus();
+      for (const event of this.pendulum.loopEvents) {
+        this.gameEngine.addJoules(bonus);
+        
+        const fraction = (event.linkIndex + 1) / this.pendulum.N;
+        const h = 180 - fraction * (180 - 15);
+        const l = 27 + fraction * (50 - 27);
+        const colorStr = `hsl(${h}, 100%, ${l}%)`;
+        
+        this.floatingTexts.push({
+            x: event.x,
+            y: event.y,
+            text: `+${this.gameEngine.formatNumber(bonus)}`,
+            life: 1.0,
+            color: colorStr
+        });
+        this.expandingCircles.push({
+            x: event.x,
+            y: event.y,
+            radius: 10,
+            life: 1.0,
+            color: colorStr
+        });
+      }
+      this.pendulum.loopEvents = [];
+    }
+    
+    for (let i = this.floatingTexts.length - 1; i >= 0; i--) {
+        let ft = this.floatingTexts[i];
+        ft.y -= 50 * dt;
+        ft.life -= dt;
+        if (ft.life <= 0) this.floatingTexts.splice(i, 1);
+    }
+    for (let i = this.expandingCircles.length - 1; i >= 0; i--) {
+        let ec = this.expandingCircles[i];
+        ec.radius += 100 * dt;
+        ec.life -= dt;
+        if (ec.life <= 0) this.expandingCircles.splice(i, 1);
+    }
   }
 
   draw() {
@@ -134,15 +177,24 @@ export class SimulationEngine {
     this.trailCtx.lineCap = 'round';
     this.trailCtx.lineJoin = 'round';
     this.trailCtx.lineWidth = 2;
+    
+    // Fade out trail canvas (preserves transparent background)
+    this.trailCtx.globalCompositeOperation = 'destination-out';
+    this.trailCtx.fillStyle = 'rgba(0, 0, 0, 0.015)'; // About 10 seconds to fade
+    this.trailCtx.fillRect(0, 0, this.trailCanvas.width, this.trailCanvas.height);
+    this.trailCtx.globalCompositeOperation = 'source-over';
 
-    if (this.pendulum.prevTrail && this.pendulum.currTrail) {
-      this.trailCtx.beginPath();
-      this.trailCtx.moveTo(this.pendulum.prevTrail.x, this.pendulum.prevTrail.y);
-      this.trailCtx.lineTo(this.pendulum.currTrail.x, this.pendulum.currTrail.y);
-      
-      const hue = (this.pendulum.N * 30) % 360;
-      this.trailCtx.strokeStyle = `hsla(${hue}, 100%, 50%, 0.5)`; 
-      this.trailCtx.stroke();
+    if (this.pendulum.prevTrails && this.pendulum.currTrails) {
+      for (let i = 0; i < this.pendulum.N; i++) {
+        this.trailCtx.beginPath();
+        this.trailCtx.moveTo(this.pendulum.prevTrails[i].x, this.pendulum.prevTrails[i].y);
+        this.trailCtx.lineTo(this.pendulum.currTrails[i].x, this.pendulum.currTrails[i].y);
+        
+        const fraction = (i + 1) / this.pendulum.N;
+        const h = 180 - fraction * (180 - 15);
+        this.trailCtx.strokeStyle = `hsla(${h}, 100%, 50%, 0.6)`; 
+        this.trailCtx.stroke();
+      }
     }
 
     this.ctx.drawImage(this.trailCanvas, 0, 0);
@@ -206,6 +258,23 @@ export class SimulationEngine {
       this.ctx.beginPath();
       this.ctx.arc(pos[i].x, pos[i].y, 10, 0, Math.PI * 2);
       this.ctx.fill();
+    }
+    
+    // Draw expanding circles
+    for (const ec of this.expandingCircles) {
+        this.ctx.beginPath();
+        this.ctx.arc(ec.x, ec.y, ec.radius, 0, Math.PI * 2);
+        this.ctx.strokeStyle = ec.color.replace(')', `, ${ec.life})`).replace('hsl', 'hsla');
+        this.ctx.lineWidth = 3;
+        this.ctx.stroke();
+    }
+    
+    // Draw floating texts
+    this.ctx.font = "bold 20px 'Orbitron', sans-serif";
+    this.ctx.textAlign = "center";
+    for (const ft of this.floatingTexts) {
+        this.ctx.fillStyle = ft.color.replace(')', `, ${ft.life})`).replace('hsl', 'hsla');
+        this.ctx.fillText(ft.text, ft.x, ft.y);
     }
   }
 }
