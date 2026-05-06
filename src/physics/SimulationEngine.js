@@ -159,13 +159,17 @@ export class SimulationEngine {
     for(let i=0; i<this.pendulum.N; i++) {
         let currentOmega = this.pendulum.state[this.pendulum.N + i];
         
-        if (impulse > 0) {
-            if (currentOmega < MAX_IMPULSE) {
-                this.pendulum.state[this.pendulum.N + i] = Math.min(MAX_IMPULSE, currentOmega + impulse);
+        let linkMultiplier = 1.0 + (i * 0.1);
+        let linkImpulse = impulse * linkMultiplier;
+        let linkMaxImpulse = MAX_IMPULSE * linkMultiplier;
+        
+        if (linkImpulse > 0) {
+            if (currentOmega < linkMaxImpulse) {
+                this.pendulum.state[this.pendulum.N + i] = Math.min(linkMaxImpulse, currentOmega + linkImpulse);
             }
-        } else if (impulse < 0) {
-            if (currentOmega > -MAX_IMPULSE) {
-                this.pendulum.state[this.pendulum.N + i] = Math.max(-MAX_IMPULSE, currentOmega + impulse);
+        } else if (linkImpulse < 0) {
+            if (currentOmega > -linkMaxImpulse) {
+                this.pendulum.state[this.pendulum.N + i] = Math.max(-linkMaxImpulse, currentOmega + linkImpulse);
             }
         }
     }
