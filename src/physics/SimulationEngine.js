@@ -40,9 +40,23 @@ export class SimulationEngine {
       if (i < oldThetas.length) {
         this.pendulum.state[i] = oldThetas[i];
         this.pendulum.state[numLinks + i] = oldOmegas[i];
+        
+        this.pendulum.lastRewardAnglesAbs[i] = oldThetas[i];
+        if (i > 0) {
+          this.pendulum.lastRewardAnglesRel[i] = oldThetas[i] - oldThetas[i-1];
+        } else {
+          this.pendulum.lastRewardAnglesRel[i] = oldThetas[i];
+        }
       } else {
         this.pendulum.state[i] = Math.PI / 2; 
         this.pendulum.state[numLinks + i] = 0;
+        
+        this.pendulum.lastRewardAnglesAbs[i] = Math.PI / 2;
+        if (i > 0) {
+          this.pendulum.lastRewardAnglesRel[i] = Math.PI / 2 - this.pendulum.state[i-1];
+        } else {
+          this.pendulum.lastRewardAnglesRel[i] = Math.PI / 2;
+        }
       }
     }
     
