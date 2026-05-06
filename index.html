@@ -22,6 +22,10 @@
           +<span id="jouleRate">0.00</span> J/s
         </div>
       </div>
+      <div id="burst-hud" class="burst-hud hidden">
+        <div class="burst-hud-label">Chaos Burst: <span id="burstCountdown">--</span></div>
+        <div class="burst-bar-track"><div id="burstBarFill" class="burst-bar-fill"></div></div>
+      </div>
       <div class="top-right-controls">
         <button id="settings-toggle-btn" class="icon-btn">⚙️</button>
       </div>
@@ -29,8 +33,8 @@
 
     <!-- Mobile Bottom Nav -->
     <div class="bottom-nav glass-panel">
-      <button class="nav-btn active" data-target="shop-tab">Shop</button>
-      <button class="nav-btn" data-target="automation-tab">Auto</button>
+      <button class="nav-btn active" data-target="shop-tab">Upgrades</button>
+      <button class="nav-btn" data-target="automation-tab">Automation</button>
       <button class="nav-btn" data-target="prestige-tab">Prestige</button>
     </div>
 
@@ -38,7 +42,7 @@
     <div class="side-panel glass-panel" id="sidePanel">
       <!-- Desktop Tab Headers (Hidden on Mobile) -->
       <div class="desktop-nav">
-        <button class="nav-btn active" data-target="shop-tab">Shop</button>
+        <button class="nav-btn active" data-target="shop-tab">Upgrades</button>
         <button class="nav-btn" data-target="automation-tab">Automation</button>
         <button class="nav-btn" data-target="prestige-tab">Prestige</button>
         <button class="nav-btn" data-target="settings-tab">Settings</button>
@@ -109,9 +113,6 @@
             </div>
             <button class="btn-primary">Cost: <span id="burstTimerCost">1000</span> J</button>
           </div>
-        </div>
-        <div style="margin-top: 15px; text-align: center; font-size: 0.9rem; color: #00ffff;">
-          Next burst in: <span id="burstCountdown">--</span>
         </div>
       </div>
 

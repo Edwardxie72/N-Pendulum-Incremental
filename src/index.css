@@ -76,6 +76,48 @@ body {
   pointer-events: auto;
 }
 
+/* --- Burst Countdown HUD --- */
+.burst-hud {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0, 20, 30, 0.7);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 10px;
+  padding: 6px 12px;
+  min-width: 160px;
+  backdrop-filter: blur(8px);
+}
+
+.burst-hud.hidden {
+  display: none;
+}
+
+.burst-hud-label {
+  font-size: 0.75rem;
+  color: #00ffff;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.burst-bar-track {
+  width: 100%;
+  height: 5px;
+  background: rgba(0, 255, 255, 0.15);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.burst-bar-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #00ffff, #008b8b);
+  border-radius: 3px;
+  transition: width 0.1s linear;
+}
+
 .currency-display {
   display: flex;
   flex-direction: column;

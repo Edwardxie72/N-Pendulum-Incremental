@@ -49,6 +49,8 @@ export class GameEngine {
       burstTimerCost: document.getElementById('burstTimerCost'),
       buyBurstTimerBtn: document.querySelector('#buy-burst-timer-btn button'),
       burstCountdown: document.getElementById('burstCountdown'),
+      burstHud: document.getElementById('burst-hud'),
+      burstBarFill: document.getElementById('burstBarFill'),
       
       constantsValue: document.getElementById('constantsValue'),
       prestigeBtn: document.getElementById('prestigeBtn'),
@@ -276,19 +278,20 @@ export class GameEngine {
       this.burstAccumulator += dt;
       const targetTime = this.getBurstTimerValue(this.burstTimerLevel);
       if (this.burstAccumulator >= targetTime) {
-        this.burstAccumulator -= targetTime; // Keep any overflow
+        this.burstAccumulator -= targetTime;
         if (this.simulation) {
           this.simulation.triggerAutomationBurst(this.burstPowerLevel);
         }
       }
       
-      // Update countdown UI smoothly
-      if (this.ui.burstCountdown) {
-        const remaining = Math.max(0, targetTime - this.burstAccumulator).toFixed(1);
-        this.ui.burstCountdown.innerText = `${remaining}s`;
-      }
+      const remaining = Math.max(0, targetTime - this.burstAccumulator);
+      const progress = 1 - (remaining / targetTime); // 0 = just reset, 1 = about to fire
+      
+      if (this.ui.burstHud) this.ui.burstHud.classList.remove('hidden');
+      if (this.ui.burstCountdown) this.ui.burstCountdown.innerText = `${remaining.toFixed(1)}s`;
+      if (this.ui.burstBarFill) this.ui.burstBarFill.style.width = `${(progress * 100).toFixed(1)}%`;
     } else {
-      if (this.ui.burstCountdown) this.ui.burstCountdown.innerText = `--`;
+      if (this.ui.burstHud) this.ui.burstHud.classList.add('hidden');
     }
     
     // Fast UI update for the main counter
