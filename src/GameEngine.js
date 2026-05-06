@@ -105,7 +105,7 @@ export class GameEngine {
   }
   
   getBurstTimerValue(level) {
-    return Math.max(1.0, 10.0 - (level * 1.0));
+    return Math.max(4.0, 10.0 - (level * 1.0));
   }
   
   addJoules(amount, isBaseKinetic = false) {
