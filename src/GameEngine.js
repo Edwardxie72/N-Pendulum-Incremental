@@ -105,7 +105,13 @@ export class GameEngine {
   }
   
   getBurstTimerValue(level) {
-    return Math.max(4.0, 10.0 - (level * 1.0));
+    // Each phase is 5 upgrades. Step size halves every phase.
+    // Phase 0: 10→5 (-1.0/lvl), Phase 1: 5→2.5 (-0.5/lvl), Phase 2: 2.5→1.25 (-0.25/lvl), etc.
+    const phase = Math.floor(level / 5);
+    const levelInPhase = level % 5;
+    const phaseStart = 10.0 / Math.pow(2, phase);
+    const step = 1.0 / Math.pow(2, phase);
+    return Math.max(0.5, phaseStart - levelInPhase * step);
   }
   
   addJoules(amount, isBaseKinetic = false) {
