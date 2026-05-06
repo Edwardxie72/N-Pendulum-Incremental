@@ -272,13 +272,13 @@ export class GameEngine {
     this.ui.jouleRate.innerText = this.formatNumber(this.jouleRate);
     this.ui.currentLinks.innerText = this.links;
     this.ui.linkCost.innerText = this.formatNumber(this.getLinkCost());
-    this.ui.currentSlingshot.innerText = this.slingshotLevel;
+    this.ui.currentSlingshot.innerHTML = `${this.slingshotLevel.toFixed(1)}x &rarr; ${(this.slingshotLevel + 1).toFixed(1)}x`;
     this.ui.slingshotCost.innerText = this.formatNumber(this.getSlingshotCost());
-    this.ui.currentFriction.innerText = this.frictionLevel;
+    this.ui.currentFriction.innerHTML = `${(Math.pow(0.90, this.frictionLevel) * 100).toFixed(0)}% &rarr; ${(Math.pow(0.90, this.frictionLevel + 1) * 100).toFixed(0)}%`;
     this.ui.frictionCost.innerText = this.formatNumber(this.getFrictionCost());
-    this.ui.currentLoop.innerText = this.loopLevel;
+    this.ui.currentLoop.innerHTML = `${(1 + this.loopLevel * 0.5).toFixed(1)}x &rarr; ${(1 + (this.loopLevel + 1) * 0.5).toFixed(1)}x`;
     this.ui.loopCost.innerText = this.formatNumber(this.getLoopCost());
-    this.ui.currentJouleMultiplier.innerText = this.jouleMultiplierLevel;
+    this.ui.currentJouleMultiplier.innerHTML = `${Math.pow(1.5, this.jouleMultiplierLevel).toFixed(2)}x &rarr; ${Math.pow(1.5, this.jouleMultiplierLevel + 1).toFixed(2)}x`;
     this.ui.jouleMultiplierCost.innerText = this.formatNumber(this.getJouleMultiplierCost());
     this.ui.constantsValue.innerText = this.formatNumber(this.universalConstants);
   }
