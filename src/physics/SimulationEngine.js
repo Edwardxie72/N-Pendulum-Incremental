@@ -277,6 +277,11 @@ export class SimulationEngine {
 
     if (this.isDragging) {
       this.ctx.beginPath();
+      this.ctx.arc(this.dragStart.x, this.dragStart.y, 8, 0, Math.PI * 2);
+      this.ctx.fillStyle = 'rgba(255, 64, 0, 0.8)';
+      this.ctx.fill();
+
+      this.ctx.beginPath();
       this.ctx.moveTo(this.dragStart.x, this.dragStart.y);
       this.ctx.lineTo(this.dragCurrent.x, this.dragCurrent.y);
       this.ctx.strokeStyle = 'rgba(255, 64, 0, 0.8)';
