@@ -159,7 +159,7 @@ export class SimulationEngine {
     for(let i=0; i<this.pendulum.N; i++) {
         let currentOmega = this.pendulum.state[this.pendulum.N + i];
         
-        let linkMultiplier = 1.0 + (i * 0.1);
+        let linkMultiplier = 1.0 + (i * 0.5);
         let linkImpulse = impulse * linkMultiplier;
         let linkMaxImpulse = MAX_IMPULSE * linkMultiplier;
         
