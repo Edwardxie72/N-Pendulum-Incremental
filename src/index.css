@@ -112,10 +112,9 @@ body {
 
 .burst-bar-fill {
   height: 100%;
-  width: 100%;
+  width: 0%;
   background: linear-gradient(90deg, #00ffff, #008b8b);
   border-radius: 3px;
-  transition: width 0.1s linear;
 }
 
 .currency-display {
