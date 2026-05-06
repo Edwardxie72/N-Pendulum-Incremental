@@ -20,10 +20,8 @@ export class NPendulum {
     }
     
     this.loopEvents = [];
-    this.boostEvents = [];
     this.prevTrails = null;
     this.currTrails = null;
-    this.lastSides = new Array(this.N).fill(1);
   }
 
   getKineticEnergy() {
@@ -120,15 +118,6 @@ export class NPendulum {
                 this.loopEvents.push({ linkIndex: i, x: pos[i].x, y: pos[i].y, cx: pos[i - 1].x, cy: pos[i - 1].y, r: this.l });
             }
         }
-        
-        let currentAbsAngle = this.state[i];
-        let currentSide = Math.sign(Math.sin(currentAbsAngle));
-        if (currentSide !== 0 && this.lastSides[i] !== 0 && currentSide !== this.lastSides[i]) {
-            if (Math.cos(currentAbsAngle) > 0) {
-                this.boostEvents.push({ linkIndex: i, direction: Math.sign(this.state[this.N + i] || 1) });
-            }
-        }
-        if (currentSide !== 0) this.lastSides[i] = currentSide;
     }
     
     // Multi-trail tracking

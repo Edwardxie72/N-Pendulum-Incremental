@@ -185,25 +185,6 @@ export class SimulationEngine {
     
     this.pendulum.update(dt);
     
-    const motorLvl = this.gameEngine.motorLevel || 0;
-    
-    // Process swing boosts
-    if (this.pendulum.boostEvents && this.pendulum.boostEvents.length > 0) {
-      if (motorLvl > 0) {
-        const boostAmount = motorLvl * 0.05;
-        const maxMotorSpeed = motorLvl * 0.5; // Cap speed that motor will boost up to
-        for (const event of this.pendulum.boostEvents) {
-          if (event.linkIndex === 0) {
-            const currentSpeed = this.pendulum.state[this.pendulum.N + event.linkIndex];
-            if (Math.abs(currentSpeed) < maxMotorSpeed) {
-              this.pendulum.state[this.pendulum.N + event.linkIndex] += boostAmount * event.direction;
-            }
-          }
-        }
-      }
-      this.pendulum.boostEvents = [];
-    }
-    
     const ke = this.pendulum.getKineticEnergy();
     if (ke > 0.01) {
       this.gameEngine.addJoules(ke * dt * 0.01, true); // 10x slower initial generation

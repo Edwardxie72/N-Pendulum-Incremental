@@ -5,7 +5,6 @@ export class GameEngine {
     this.links = 1;
     this.maxLinks = 10;
     this.slingshotLevel = 1;
-    this.motorLevel = 0;
     this.frictionLevel = 0;
     this.loopLevel = 0;
     this.jouleMultiplierLevel = 0;
@@ -28,9 +27,6 @@ export class GameEngine {
       currentSlingshot: document.getElementById('currentSlingshot'),
       slingshotCost: document.getElementById('slingshotCost'),
       buySlingshotBtn: document.querySelector('#buy-slingshot-btn button'),
-      currentMotor: document.getElementById('currentMotor'),
-      motorCost: document.getElementById('motorCost'),
-      buyMotorBtn: document.querySelector('#buy-motor-btn button'),
       currentFriction: document.getElementById('currentFriction'),
       frictionCost: document.getElementById('frictionCost'),
       buyFrictionBtn: document.querySelector('#buy-friction-btn button'),
@@ -61,10 +57,6 @@ export class GameEngine {
   
   getSlingshotCost() {
     return 3 * Math.pow(2.5, this.slingshotLevel - 1);
-  }
-  
-  getMotorCost() {
-    return 50 * Math.pow(3, this.motorLevel);
   }
   
   getFrictionCost() {
@@ -119,16 +111,6 @@ export class GameEngine {
     }
   }
   
-  buyMotor() {
-    const cost = this.getMotorCost();
-    if (this.joules >= cost) {
-      this.joules -= cost;
-      this.motorLevel++;
-      this.saveState();
-      this.updateUI();
-    }
-  }
-  
   buyFriction() {
     const cost = this.getFrictionCost();
     if (this.joules >= cost) {
@@ -167,7 +149,6 @@ export class GameEngine {
     this.totalJoulesEarned = 0;
     this.links = 1;
     this.slingshotLevel = 1;
-    this.motorLevel = 0;
     this.frictionLevel = 0;
     this.loopLevel = 0;
     this.jouleMultiplierLevel = 0;
@@ -182,7 +163,7 @@ export class GameEngine {
   }
 
   getPendingConstants() {
-    return (this.links - 1) + (this.slingshotLevel - 1) + this.motorLevel + this.frictionLevel + this.loopLevel + this.jouleMultiplierLevel;
+    return (this.links - 1) + (this.slingshotLevel - 1) + this.frictionLevel + this.loopLevel + this.jouleMultiplierLevel;
   }
 
   prestige() {
@@ -192,7 +173,6 @@ export class GameEngine {
       this.joules = 0;
       this.links = 1;
       this.slingshotLevel = 1;
-      this.motorLevel = 0;
       this.frictionLevel = 0;
       this.loopLevel = 0;
       this.jouleMultiplierLevel = 0;
@@ -205,7 +185,6 @@ export class GameEngine {
   bindEvents() {
     this.ui.buyLinkBtn.addEventListener('click', () => this.buyLink());
     this.ui.buySlingshotBtn.addEventListener('click', () => this.buySlingshot());
-    this.ui.buyMotorBtn.addEventListener('click', () => this.buyMotor());
     this.ui.buyFrictionBtn.addEventListener('click', () => this.buyFriction());
     this.ui.buyLoopBtn.addEventListener('click', () => this.buyLoop());
     this.ui.buyJouleMultiplierBtn.addEventListener('click', () => this.buyJouleMultiplier());
@@ -255,12 +234,6 @@ export class GameEngine {
       this.ui.buySlingshotBtn.classList.add('disabled');
     }
     
-    if (this.joules >= this.getMotorCost()) {
-      this.ui.buyMotorBtn.classList.remove('disabled');
-    } else {
-      this.ui.buyMotorBtn.classList.add('disabled');
-    }
-    
     if (this.joules >= this.getFrictionCost()) {
       this.ui.buyFrictionBtn.classList.remove('disabled');
     } else {
@@ -301,8 +274,6 @@ export class GameEngine {
     this.ui.linkCost.innerText = this.formatNumber(this.getLinkCost());
     this.ui.currentSlingshot.innerText = this.slingshotLevel;
     this.ui.slingshotCost.innerText = this.formatNumber(this.getSlingshotCost());
-    this.ui.currentMotor.innerText = this.motorLevel;
-    this.ui.motorCost.innerText = this.formatNumber(this.getMotorCost());
     this.ui.currentFriction.innerText = this.frictionLevel;
     this.ui.frictionCost.innerText = this.formatNumber(this.getFrictionCost());
     this.ui.currentLoop.innerText = this.loopLevel;
@@ -327,7 +298,6 @@ export class GameEngine {
       joules: this.joules,
       links: this.links,
       slingshotLevel: this.slingshotLevel,
-      motorLevel: this.motorLevel,
       frictionLevel: this.frictionLevel,
       loopLevel: this.loopLevel,
       jouleMultiplierLevel: this.jouleMultiplierLevel,
@@ -345,7 +315,6 @@ export class GameEngine {
         this.joules = state.joules || 0;
         this.links = state.links || 1;
         this.slingshotLevel = state.slingshotLevel || 1;
-        this.motorLevel = state.motorLevel || 0;
         this.frictionLevel = state.frictionLevel || 0;
         this.loopLevel = state.loopLevel || 0;
         this.jouleMultiplierLevel = state.jouleMultiplierLevel || 0;
