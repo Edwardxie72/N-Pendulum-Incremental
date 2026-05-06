@@ -68,7 +68,7 @@ export class GameEngine {
   }
   
   calculateLoopBonus() {
-    return 10 * Math.pow(10, this.links - 1) * Math.pow(1.1, this.loopLevel);
+    return 10 * Math.pow(10, this.links - 1) * (1 + this.loopLevel * 0.5);
   }
   
   getJouleMultiplierCost() {
