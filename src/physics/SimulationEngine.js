@@ -159,16 +159,9 @@ export class SimulationEngine {
     for(let i=0; i<this.pendulum.N; i++) {
         let currentOmega = this.pendulum.state[this.pendulum.N + i];
         
-        // The first pendulum perfectly follows your swipe.
-        // Outer pendulums get an increasingly chaotic multiplier that can even reverse their direction!
-        let linkMultiplier = 1.0;
-        if (i > 0) {
-            let chaosFactor = (Math.random() * 2.0 - 1.0) * i; // Ranges from -i to +i
-            linkMultiplier = 1.0 + chaosFactor;
-        }
-        
+        let linkMultiplier = 1.0 + (i * 0.5);
         let linkImpulse = impulse * linkMultiplier;
-        let linkMaxImpulse = MAX_IMPULSE * Math.max(1.0, Math.abs(linkMultiplier));
+        let linkMaxImpulse = MAX_IMPULSE * linkMultiplier;
         
         if (linkImpulse > 0) {
             if (currentOmega < linkMaxImpulse) {
