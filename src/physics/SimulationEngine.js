@@ -175,6 +175,36 @@ export class SimulationEngine {
     }
   }
 
+  triggerAutomationBurst(powerLevel) {
+    if (!this.pendulum || powerLevel === 0) return;
+    
+    const burstOmega = 4.0 + (powerLevel * 1.5);
+    
+    for (let i = 0; i < this.pendulum.N; i++) {
+        // Strictly alternate directions: even links go right, odd links go left
+        const direction = (i % 2 === 0) ? 1 : -1;
+        // Add velocity directly — bypasses the slingshot MAX_IMPULSE cap entirely
+        this.pendulum.state[this.pendulum.N + i] += burstOmega * direction;
+    }
+    
+    // Cyan shockwave from the anchor point
+    this.expandingCircles.push({
+        x: this.pendulum.x,
+        y: this.pendulum.y,
+        radius: 10,
+        life: 1.0,
+        color: `hsl(180, 100%, 50%)`
+    });
+    
+    this.floatingTexts.push({
+        x: this.pendulum.x,
+        y: this.pendulum.y - 50,
+        text: `CHAOS BURST!`,
+        life: 1.5,
+        color: `hsl(180, 100%, 80%)`
+    });
+  }
+
   update(dt) {
     if (!this.pendulum) return;
     

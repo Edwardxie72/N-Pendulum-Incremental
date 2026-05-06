@@ -8,6 +8,11 @@ export class GameEngine {
     this.frictionLevel = 0;
     this.loopLevel = 0;
     this.jouleMultiplierLevel = 0;
+    this.burstPowerLevel = 0;
+    this.burstTimerLevel = 0;
+    this.burstAccumulator = 0;
+    this.loopLevel = 0;
+    this.jouleMultiplierLevel = 0;
     this.universalConstants = 0;
     this.cHeat = 1.0; // Prestige multiplier
     
@@ -36,6 +41,15 @@ export class GameEngine {
       currentJouleMultiplier: document.getElementById('currentJouleMultiplier'),
       jouleMultiplierCost: document.getElementById('jouleMultiplierCost'),
       buyJouleMultiplierBtn: document.querySelector('#buy-joule-multiplier-btn button'),
+      
+      currentBurstPower: document.getElementById('currentBurstPower'),
+      burstPowerCost: document.getElementById('burstPowerCost'),
+      buyBurstPowerBtn: document.querySelector('#buy-burst-power-btn button'),
+      currentBurstTimer: document.getElementById('currentBurstTimer'),
+      burstTimerCost: document.getElementById('burstTimerCost'),
+      buyBurstTimerBtn: document.querySelector('#buy-burst-timer-btn button'),
+      burstCountdown: document.getElementById('burstCountdown'),
+      
       constantsValue: document.getElementById('constantsValue'),
       prestigeBtn: document.getElementById('prestigeBtn'),
       heatDeathBtn: document.getElementById('heatDeathBtn')
@@ -73,6 +87,23 @@ export class GameEngine {
   
   getJouleMultiplierCost() {
     return 100 * Math.pow(5, this.jouleMultiplierLevel);
+  }
+  
+  getBurstPowerCost() {
+    return 500 * Math.pow(3.0, this.burstPowerLevel);
+  }
+  
+  getBurstTimerCost() {
+    return 1000 * Math.pow(4.0, this.burstTimerLevel);
+  }
+  
+  getBurstPowerValue(level) {
+    if (level === 0) return 0;
+    return 4.0 + (level * 1.5);
+  }
+  
+  getBurstTimerValue(level) {
+    return Math.max(1.0, 10.0 - (level * 1.0));
   }
   
   addJoules(amount, isBaseKinetic = false) {
@@ -141,6 +172,26 @@ export class GameEngine {
     }
   }
   
+  buyBurstPower() {
+    const cost = this.getBurstPowerCost();
+    if (this.joules >= cost) {
+      this.joules -= cost;
+      this.burstPowerLevel++;
+      this.saveState();
+      this.updateUI();
+    }
+  }
+  
+  buyBurstTimer() {
+    const cost = this.getBurstTimerCost();
+    if (this.joules >= cost) {
+      this.joules -= cost;
+      this.burstTimerLevel++;
+      this.saveState();
+      this.updateUI();
+    }
+  }
+  
   hardReset() {
     this.isResetting = true;
     
@@ -152,6 +203,9 @@ export class GameEngine {
     this.frictionLevel = 0;
     this.loopLevel = 0;
     this.jouleMultiplierLevel = 0;
+    this.burstPowerLevel = 0;
+    this.burstTimerLevel = 0;
+    this.burstAccumulator = 0;
     this.universalConstants = 0;
     this.cHeat = 1.0;
     
@@ -163,7 +217,7 @@ export class GameEngine {
   }
 
   getPendingConstants() {
-    return (this.links - 1) + (this.slingshotLevel - 1) + this.frictionLevel + this.loopLevel + this.jouleMultiplierLevel;
+    return (this.links - 1) + (this.slingshotLevel - 1) + this.frictionLevel + this.loopLevel + this.jouleMultiplierLevel + this.burstPowerLevel + this.burstTimerLevel;
   }
 
   prestige() {
@@ -176,6 +230,9 @@ export class GameEngine {
       this.frictionLevel = 0;
       this.loopLevel = 0;
       this.jouleMultiplierLevel = 0;
+      this.burstPowerLevel = 0;
+      this.burstTimerLevel = 0;
+      this.burstAccumulator = 0;
       this.cHeat = 1.0;
       this.saveState();
       location.reload();
@@ -188,6 +245,8 @@ export class GameEngine {
     this.ui.buyFrictionBtn.addEventListener('click', () => this.buyFriction());
     this.ui.buyLoopBtn.addEventListener('click', () => this.buyLoop());
     this.ui.buyJouleMultiplierBtn.addEventListener('click', () => this.buyJouleMultiplier());
+    this.ui.buyBurstPowerBtn.addEventListener('click', () => this.buyBurstPower());
+    this.ui.buyBurstTimerBtn.addEventListener('click', () => this.buyBurstTimer());
     
     this.ui.prestigeBtn.addEventListener('click', () => {
       if (confirm("Are you sure you want to undergo Entropic Rebirth? You will lose all current Joules and Upgrades, but gain a permanent production multiplier!")) {
@@ -210,6 +269,26 @@ export class GameEngine {
       this.joulesThisSecond = 0;
       this.timeAccumulator = 0;
       this.updateUI();
+    }
+    
+    // Automation Burst Logic
+    if (this.burstPowerLevel > 0) {
+      this.burstAccumulator += dt;
+      const targetTime = this.getBurstTimerValue(this.burstTimerLevel);
+      if (this.burstAccumulator >= targetTime) {
+        this.burstAccumulator -= targetTime; // Keep any overflow
+        if (this.simulation) {
+          this.simulation.triggerAutomationBurst(this.burstPowerLevel);
+        }
+      }
+      
+      // Update countdown UI smoothly
+      if (this.ui.burstCountdown) {
+        const remaining = Math.max(0, targetTime - this.burstAccumulator).toFixed(1);
+        this.ui.burstCountdown.innerText = `${remaining}s`;
+      }
+    } else {
+      if (this.ui.burstCountdown) this.ui.burstCountdown.innerText = `--`;
     }
     
     // Fast UI update for the main counter
@@ -252,6 +331,18 @@ export class GameEngine {
       this.ui.buyJouleMultiplierBtn.classList.add('disabled');
     }
     
+    if (this.joules >= this.getBurstPowerCost()) {
+      this.ui.buyBurstPowerBtn.classList.remove('disabled');
+    } else {
+      this.ui.buyBurstPowerBtn.classList.add('disabled');
+    }
+    
+    if (this.joules >= this.getBurstTimerCost()) {
+      this.ui.buyBurstTimerBtn.classList.remove('disabled');
+    } else {
+      this.ui.buyBurstTimerBtn.classList.add('disabled');
+    }
+    
     const pending = this.getPendingConstants();
     if (pending > 0) {
       this.ui.prestigeBtn.classList.remove('disabled');
@@ -280,6 +371,12 @@ export class GameEngine {
     this.ui.loopCost.innerText = this.formatNumber(this.getLoopCost());
     this.ui.currentJouleMultiplier.innerHTML = `${Math.pow(1.5, this.jouleMultiplierLevel).toFixed(2)}x &rarr; ${Math.pow(1.5, this.jouleMultiplierLevel + 1).toFixed(2)}x`;
     this.ui.jouleMultiplierCost.innerText = this.formatNumber(this.getJouleMultiplierCost());
+    
+    this.ui.currentBurstPower.innerHTML = `${this.getBurstPowerValue(this.burstPowerLevel).toFixed(1)} rad/s &rarr; ${this.getBurstPowerValue(this.burstPowerLevel + 1).toFixed(1)} rad/s`;
+    this.ui.burstPowerCost.innerText = this.formatNumber(this.getBurstPowerCost());
+    this.ui.currentBurstTimer.innerHTML = `${this.getBurstTimerValue(this.burstTimerLevel).toFixed(1)}s &rarr; ${this.getBurstTimerValue(this.burstTimerLevel + 1).toFixed(1)}s`;
+    this.ui.burstTimerCost.innerText = this.formatNumber(this.getBurstTimerCost());
+    
     this.ui.constantsValue.innerText = this.formatNumber(this.universalConstants);
   }
   
@@ -301,6 +398,8 @@ export class GameEngine {
       frictionLevel: this.frictionLevel,
       loopLevel: this.loopLevel,
       jouleMultiplierLevel: this.jouleMultiplierLevel,
+      burstPowerLevel: this.burstPowerLevel,
+      burstTimerLevel: this.burstTimerLevel,
       universalConstants: this.universalConstants,
       cHeat: this.cHeat
     };
@@ -318,6 +417,8 @@ export class GameEngine {
         this.frictionLevel = state.frictionLevel || 0;
         this.loopLevel = state.loopLevel || 0;
         this.jouleMultiplierLevel = state.jouleMultiplierLevel || 0;
+        this.burstPowerLevel = state.burstPowerLevel || 0;
+        this.burstTimerLevel = state.burstTimerLevel || 0;
         this.universalConstants = state.universalConstants || 0;
         this.cHeat = 1.0; // Disabled until Shop is added
         this.totalJoulesEarned = state.totalJoulesEarned || this.joules;

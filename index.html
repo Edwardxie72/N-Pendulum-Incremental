@@ -30,6 +30,7 @@
     <!-- Mobile Bottom Nav -->
     <div class="bottom-nav glass-panel">
       <button class="nav-btn active" data-target="shop-tab">Shop</button>
+      <button class="nav-btn" data-target="automation-tab">Auto</button>
       <button class="nav-btn" data-target="prestige-tab">Prestige</button>
     </div>
 
@@ -38,6 +39,7 @@
       <!-- Desktop Tab Headers (Hidden on Mobile) -->
       <div class="desktop-nav">
         <button class="nav-btn active" data-target="shop-tab">Shop</button>
+        <button class="nav-btn" data-target="automation-tab">Automation</button>
         <button class="nav-btn" data-target="prestige-tab">Prestige</button>
         <button class="nav-btn" data-target="settings-tab">Settings</button>
       </div>
@@ -86,6 +88,30 @@
             </div>
             <button class="btn-primary">Cost: <span id="jouleMultiplierCost">100</span> J</button>
           </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="automation-tab">
+        <h2>Automation</h2>
+        <div class="shop">
+          <div class="shop-item" id="buy-burst-power-btn">
+            <div class="item-info">
+              <span class="item-name">Chaotic Burst (Power)</span>
+              <span class="item-desc">Alternating Force: <span id="currentBurstPower">0.0 rad/s &rarr; 5.5 rad/s</span></span>
+            </div>
+            <button class="btn-primary">Cost: <span id="burstPowerCost">500</span> J</button>
+          </div>
+          
+          <div class="shop-item" id="buy-burst-timer-btn">
+            <div class="item-info">
+              <span class="item-name">Burst Frequency (Cooldown)</span>
+              <span class="item-desc">Time Between Bursts: <span id="currentBurstTimer">10.0s &rarr; 9.0s</span></span>
+            </div>
+            <button class="btn-primary">Cost: <span id="burstTimerCost">1000</span> J</button>
+          </div>
+        </div>
+        <div style="margin-top: 15px; text-align: center; font-size: 0.9rem; color: #00ffff;">
+          Next burst in: <span id="burstCountdown">--</span>
         </div>
       </div>
 
