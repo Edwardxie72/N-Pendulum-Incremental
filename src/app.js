@@ -51,9 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (resetBtn) {
       resetBtn.style.display = 'block';
       resetBtn.addEventListener('click', () => {
-        if(confirm("Are you sure you want to HARD RESET all progress?")) {
-          game.hardReset();
-        }
+        game.hardReset();
       });
     }
   }
@@ -107,4 +105,45 @@ document.addEventListener('DOMContentLoaded', () => {
       switchTab('settings-tab');
     });
   }
+
+  // ── Hold-to-upgrade ──────────────────────────────────────────────────────
+  // Buttons that should NOT rapid-fire (they have confirm dialogs or are one-shot)
+  const NO_HOLD_IDS = new Set(['prestigeBtn', 'heatDeathBtn', 'reset-btn', 'play-again-btn', 'settings-toggle-btn']);
+
+  let holdTimeout = null;
+  let holdInterval = null;
+
+  function stopHold() {
+    clearTimeout(holdTimeout);
+    clearInterval(holdInterval);
+    holdTimeout = null;
+    holdInterval = null;
+  }
+
+  function startHold(btn) {
+    if (NO_HOLD_IDS.has(btn.id)) return;
+    holdTimeout = setTimeout(() => {
+      holdInterval = setInterval(() => {
+        if (btn.classList.contains('disabled')) {
+          stopHold(); // ran out of currency mid-hold
+        } else {
+          btn.click();
+        }
+      }, 80);
+    }, 350);
+  }
+
+  // Attach to all buttons — new ones added after load won't be covered, but all
+  // shop buttons are static HTML so this is fine.
+  document.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('mousedown', () => startHold(btn));
+    btn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      startHold(btn);
+    }, { passive: false });
+  });
+
+  window.addEventListener('mouseup', stopHold);
+  window.addEventListener('touchend', stopHold);
+  window.addEventListener('mouseleave', stopHold);
 });

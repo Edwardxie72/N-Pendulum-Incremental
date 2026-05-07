@@ -400,19 +400,62 @@ body {
   }
 }
 
-/* Victory Screen */
-#victory-screen {
+/* Modal Overlay */
+#prestige-confirm-modal, #victory-screen {
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  transition: opacity 0.3s;
 }
 
-#victory-screen.hidden {
+#prestige-confirm-modal.hidden, #victory-screen.hidden {
   display: none;
+}
+
+.modal-content {
+  text-align: center;
+  padding: 40px;
+  max-width: 500px;
+  border-radius: 16px;
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalPop {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Victory Screen */
+#victory-screen {
+  background: rgba(0, 0, 0, 0.95);
 }
 
 .victory-content {
@@ -429,4 +472,129 @@ body {
   font-size: 3rem;
   margin-bottom: 20px;
   text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* ─── Rebirth Shop ─────────────────────────────────────────────────────────── */
+.rebirth-shop-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 1.5rem 0 0.75rem;
+  padding: 10px 14px;
+  background: rgba(168, 85, 247, 0.1);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #c084fc;
+  letter-spacing: 0.04em;
+}
+
+.rebirth-shop-subtitle {
+  font-size: 0.78rem;
+  color: #a78bfa;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.rebirth-shop {
+  gap: 0.75rem;
+}
+
+.rebirth-item {
+  border-color: rgba(168, 85, 247, 0.25);
+  background: rgba(168, 85, 247, 0.06);
+}
+
+.rebirth-item:hover {
+  background: rgba(168, 85, 247, 0.12);
+  border-color: rgba(168, 85, 247, 0.45);
+}
+
+.rebirth-name {
+  color: #c084fc;
+}
+
+.btn-rebirth {
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  color: white;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+  white-space: nowrap;
+}
+
+.btn-rebirth:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(168, 85, 247, 0.5);
+}
+
+.btn-rebirth:active {
+  transform: translateY(1px);
+}
+
+.btn-rebirth.disabled {
+  filter: grayscale(60%);
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Settings icon button */
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-size: 1.4rem;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* ─── Tutorial Overlays ──────────────────────────────────────────────────── */
+.tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+}
+.tutorial-overlay.hidden { display: none; }
+
+.tutorial-panel {
+  max-width: 480px;
+  width: 90%;
+  padding: 2rem;
+  border-radius: 18px;
+  text-align: center;
+  border: 1px solid var(--panel-border);
+  animation: modalPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tutorial-title { font-size: 1.5rem; color: var(--accent-color); margin-bottom: 0.3rem; }
+.tutorial-subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem; }
+.tutorial-desc { font-size: 0.93rem; line-height: 1.6; margin-bottom: 1.5rem; color: var(--text-muted); }
+.tutorial-desc strong { color: var(--text-color); }
+.tutorial-btn { width: 100%; padding: 14px; font-size: 1rem; }
+
+.tut-webp {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  margin: 0 auto 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 139, 139, 0.2);
+  display: block;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }

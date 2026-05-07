@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Entropy Engine</title>
   <link rel="stylesheet" href="./src/index.css" />
 </head>
+
 <body>
   <div class="game-container">
     <div class="canvas-container" id="canvasContainer">
       <canvas id="trailCanvas" class="simulation-canvas"></canvas>
       <canvas id="simulation-canvas" class="simulation-canvas"></canvas>
     </div>
-    
+
     <div class="top-hud">
       <div class="currency-display glass-panel">
         <div class="joule-counter">
@@ -24,7 +26,9 @@
       </div>
       <div id="burst-hud" class="burst-hud hidden">
         <div class="burst-hud-label">Chaos Burst: <span id="burstCountdown">--</span></div>
-        <div class="burst-bar-track"><div id="burstBarFill" class="burst-bar-fill"></div></div>
+        <div class="burst-bar-track">
+          <div id="burstBarFill" class="burst-bar-fill"></div>
+        </div>
       </div>
       <div class="top-right-controls">
         <button id="settings-toggle-btn" class="icon-btn">⚙️</button>
@@ -58,7 +62,7 @@
             </div>
             <button class="btn-primary">Cost: <span id="linkCost">10</span> J</button>
           </div>
-          
+
           <div class="shop-item" id="buy-slingshot-btn">
             <div class="item-info">
               <span class="item-name">Upgrade Slingshot Velocity</span>
@@ -66,29 +70,29 @@
             </div>
             <button class="btn-primary">Cost: <span id="slingshotCost">5</span> J</button>
           </div>
-          
 
-          
+
+
           <div class="shop-item" id="buy-friction-btn">
             <div class="item-info">
-              <span class="item-name">Lubricate Axles (Reduce Friction)</span>
+              <span class="item-name">Reduce Friction</span>
               <span class="item-desc">Friction Kept: <span id="currentFriction">100% &rarr; 90%</span></span>
             </div>
             <button class="btn-primary">Cost: <span id="frictionCost">100</span> J</button>
           </div>
-          
+
           <div class="shop-item" id="buy-loop-btn">
             <div class="item-info">
-              <span class="item-name">Magnify Loops (Loop Multiplier)</span>
+              <span class="item-name">Loop Multiplier</span>
               <span class="item-desc">Loop Bonus: <span id="currentLoop">1.0x &rarr; 1.5x</span></span>
             </div>
             <button class="btn-primary">Cost: <span id="loopCost">200</span> J</button>
           </div>
-          
+
           <div class="shop-item" id="buy-joule-multiplier-btn">
             <div class="item-info">
-              <span class="item-name">Kinetic Efficiency (Joule Multiplier)</span>
-              <span class="item-desc">Global Output: <span id="currentJouleMultiplier">1.00x &rarr; 1.50x</span></span>
+              <span class="item-name">Joule Multiplier</span>
+              <span class="item-desc">Joule Bonus: <span id="currentJouleMultiplier">1.00x &rarr; 1.50x</span></span>
             </div>
             <button class="btn-primary">Cost: <span id="jouleMultiplierCost">100</span> J</button>
           </div>
@@ -101,11 +105,12 @@
           <div class="shop-item" id="buy-burst-power-btn">
             <div class="item-info">
               <span class="item-name">Chaotic Burst (Power)</span>
-              <span class="item-desc">Alternating Force: <span id="currentBurstPower">0.0 rad/s &rarr; 5.5 rad/s</span></span>
+              <span class="item-desc">Force: <span id="currentBurstPower">0.0 rad/s &rarr; 5.5
+                  rad/s</span></span>
             </div>
             <button class="btn-primary">Cost: <span id="burstPowerCost">500</span> J</button>
           </div>
-          
+
           <div class="shop-item" id="buy-burst-timer-btn">
             <div class="item-info">
               <span class="item-name">Burst Frequency (Cooldown)</span>
@@ -118,19 +123,125 @@
 
       <div class="tab-content" id="prestige-tab">
         <h2>Entropic Progression</h2>
+
         <div class="prestige-section">
-          <p class="constants-counter">Universal Constants: <span id="constantsValue">0</span></p>
-          <button id="prestigeBtn" class="btn-primary" disabled>Entropic Rebirth (Prestige)</button>
-          <button id="heatDeathBtn" class="btn-danger" style="margin-top: 10px;" disabled>Initiate Heat Death (Beat Game)</button>
+          <button id="heatDeathBtn" class="btn-danger disabled">Initiate Heat Death (Reach 1e100 J)</button>
+          <p class="constants-counter" style="margin-top: 1.25rem;">Universal Constants: <span
+              id="constantsValue">0</span></p>
+          <button id="prestigeBtn" class="btn-primary disabled">Reach 1e10 J to Rebirth</button>
+        </div>
+
+
+        <div class="rebirth-shop-header">
+          <span>⚛ Rebirth Shop</span>
+          <span class="rebirth-shop-subtitle">Permanent upgrades — survive every reset</span>
+        </div>
+
+        <div class="shop rebirth-shop">
+
+          <div class="shop-item rebirth-item" id="buy-rebirth-links-btn">
+            <div class="item-info">
+              <span class="item-name rebirth-name">Extra Pendulum System</span>
+              <span class="item-desc">Active Systems: <span id="currentRebirthLinks">1 System → 2 Systems</span></span>
+            </div>
+            <button class="btn-rebirth disabled">Cost: <span id="rebirthLinksCost">1</span> ⚛</button>
+          </div>
+
+          <div class="shop-item rebirth-item" id="buy-rebirth-slingshot-btn">
+            <div class="item-info">
+              <span class="item-name rebirth-name">Slingshot Power</span>
+              <span class="item-desc">Velocity Exponent: <span id="currentRebirthSlingshot">^1.00 →
+                  ^1.02</span></span>
+            </div>
+            <button class="btn-rebirth disabled">Cost: <span id="rebirthSlingshotCost">2</span> ⚛</button>
+          </div>
+
+          <div class="shop-item rebirth-item" id="buy-rebirth-loop-btn">
+            <div class="item-info">
+              <span class="item-name rebirth-name">Loop Resonance Power</span>
+              <span class="item-desc">Loop Bonus Exponent: <span id="currentRebirthLoop">^1.00 → ^1.02</span></span>
+            </div>
+            <button class="btn-rebirth disabled">Cost: <span id="rebirthLoopCost">2</span> ⚛</button>
+          </div>
+
+          <div class="shop-item rebirth-item" id="buy-rebirth-joule-btn">
+            <div class="item-info">
+              <span class="item-name rebirth-name">Joule Entropy Power</span>
+              <span class="item-desc">Income Exponent: <span id="currentRebirthJoule">^1.00 → ^1.02</span></span>
+            </div>
+            <button class="btn-rebirth disabled">Cost: <span id="rebirthJouleCost">3</span> ⚛</button>
+          </div>
+
+          <div class="shop-item rebirth-item" id="buy-rebirth-distance-btn">
+            <div class="item-info">
+              <span class="item-name rebirth-name">Pendulum Distance Multiplier</span>
+              <span class="item-desc">Per-Link Bonus (Each link multiplies Joules/Loops for all links below by this
+                much): <span id="currentRebirthDistance">1x → 10x per link</span></span>
+            </div>
+            <button class="btn-rebirth disabled">Cost: <span id="rebirthDistanceCost">100</span> ⚛</button>
+          </div>
+
+          <div class="shop-item rebirth-item" id="buy-rebirth-constant-mult-btn">
+            <div class="item-info">
+              <span class="item-name rebirth-name">Universal Constants Multiplier</span>
+              <span class="item-desc">Prestige Yield: <span id="currentRebirthConstantMult">1x → 2x
+                  Constants</span></span>
+            </div>
+            <button class="btn-rebirth disabled">Cost: <span id="rebirthConstantMultCost">20</span> ⚛</button>
+          </div>
+
+
         </div>
       </div>
 
+
       <div class="tab-content" id="settings-tab">
         <h2>Settings</h2>
-        <button id="reset-btn" class="btn-danger" style="display: none; margin-top: 10px;">[DEBUG] Hard Reset Game</button>
+        <button id="reset-btn" class="btn-danger" style="display: none; margin-top: 10px;">[DEBUG] Hard Reset
+          Game</button>
       </div>
     </div>
   </div>
+
+  <div id="prestige-confirm-modal" class="hidden">
+    <div class="modal-content glass-panel">
+      <h2 style="color: var(--accent-color); margin-bottom: 1rem;">Entropic Rebirth</h2>
+      <p style="margin-bottom: 1.5rem;">Are you sure you want to undergo Entropic Rebirth? <br><br>
+        You will lose all current Joules and Upgrades, but you will gain ⚛ <span id="modalPendingConstants">0</span>
+        Universal Constants for permanent production multipliers!</p>
+      <div class="modal-actions">
+        <button id="prestigeConfirmBtn" class="btn-primary">Confirm Rebirth</button>
+        <button id="prestigeCancelBtn" class="btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tutorial 1: How to play (shown on first launch) -->
+  <div id="tutorial-1" class="tutorial-overlay hidden">
+    <div class="tutorial-panel glass-panel">
+      <h2 class="tutorial-title">⚡ Welcome to the Entropy Engine</h2>
+      <p class="tutorial-subtitle">Generate energy from pendulum chaos</p>
+      <img src="./assets/tutorial_1.webp" class="tut-webp" alt="Drag and release the pendulum" />
+      <p class="tutorial-desc"><strong>Click &amp; drag</strong> anywhere on the canvas to pull the pendulum, then
+        <strong>release</strong> — it swings and generates ⚡ Joules!
+      </p>
+      <button id="tutorial-1-continue" class="btn-primary tutorial-btn">Let's Go!</button>
+    </div>
+  </div>
+
+  <!-- Tutorial 2: Loops (shown when slingshot reaches 3.0x) -->
+  <div id="tutorial-2" class="tutorial-overlay hidden">
+    <div class="tutorial-panel glass-panel">
+      <h2 class="tutorial-title">🔄 Full Loops = Massive Bonuses</h2>
+      <p class="tutorial-subtitle">Unlock exponential Joule income</p>
+      <img src="./assets/tutorial_2.webp" class="tut-webp" alt="Rapid drags to build up a full loop" />
+      <p class="tutorial-desc"><strong>Rapidly drag &amp; release</strong> in the same direction to build up speed. Once
+        you have enough velocity, the pendulum will complete <strong>full 360° loops</strong> for a huge Joule bonus!
+      </p>
+      <button id="tutorial-2-continue" class="btn-primary tutorial-btn">Got It!</button>
+    </div>
+  </div>
+
 
   <div id="victory-screen" class="hidden">
     <div class="victory-content glass-panel">
@@ -142,4 +253,5 @@
 
   <script type="module" src="./src/app.js"></script>
 </body>
+
 </html>
