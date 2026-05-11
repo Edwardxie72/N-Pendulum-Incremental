@@ -133,6 +133,16 @@ body {
   color: var(--accent-secondary);
   text-shadow: 0 0 15px rgba(255, 64, 0, 0.5);
   line-height: 1.2;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+#jouleValue {
+  display: inline-block;
+  min-width: 4.5em; /* Fits 999.99 and 999e9 comfortably without shifting */
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .joule-rate {
