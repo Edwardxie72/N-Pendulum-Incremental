@@ -620,9 +620,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: var(--panel-bg);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: #191e2d; /* Solid color matching panel-bg */
+    /* Removed backdrop-filter for solid color */
     border-bottom: 1px solid var(--panel-border);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
