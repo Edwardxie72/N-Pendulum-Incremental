@@ -312,8 +312,8 @@ body {
     display: none;
   }
   
-  .top-right-controls {
-    display: none;
+  .top-hud {
+    right: 420px;
   }
   
   .side-panel {
